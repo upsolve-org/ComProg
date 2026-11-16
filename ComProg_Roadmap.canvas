@@ -1,0 +1,244 @@
+{
+  "nodes": [
+    {
+      "id": "home",
+      "type": "file",
+      "file": "ComProg/Home.md",
+      "x": 500,
+      "y": -100,
+      "width": 400,
+      "height": 240,
+      "color": "1"
+    },
+    {
+      "id": "m00",
+      "type": "file",
+      "file": "ComProg/00_General_Advice_and_Practice/README.md",
+      "x": 100,
+      "y": 220,
+      "width": 360,
+      "height": 220,
+      "color": "4"
+    },
+    {
+      "id": "m01",
+      "type": "file",
+      "file": "ComProg/01_Foundations_and_Complexity/README.md",
+      "x": 520,
+      "y": 220,
+      "width": 360,
+      "height": 220,
+      "color": "4"
+    },
+    {
+      "id": "m02",
+      "type": "file",
+      "file": "ComProg/02_Binary_and_Ternary_Search/README.md",
+      "x": 940,
+      "y": 220,
+      "width": 360,
+      "height": 220,
+      "color": "4"
+    },
+    {
+      "id": "m03",
+      "type": "file",
+      "file": "ComProg/03_Two_Pointers_and_Sliding_Window/README.md",
+      "x": 100,
+      "y": 520,
+      "width": 360,
+      "height": 220,
+      "color": "5"
+    },
+    {
+      "id": "m04",
+      "type": "file",
+      "file": "ComProg/04_Sorting_and_Greedy/README.md",
+      "x": 520,
+      "y": 520,
+      "width": 360,
+      "height": 220,
+      "color": "5"
+    },
+    {
+      "id": "m05",
+      "type": "file",
+      "file": "ComProg/05_Data_Structures/README.md",
+      "x": 940,
+      "y": 520,
+      "width": 360,
+      "height": 220,
+      "color": "6"
+    },
+    {
+      "id": "m06",
+      "type": "file",
+      "file": "ComProg/06_Dynamic_Programming/README.md",
+      "x": 100,
+      "y": 820,
+      "width": 360,
+      "height": 220,
+      "color": "2"
+    },
+    {
+      "id": "m07",
+      "type": "file",
+      "file": "ComProg/07_Graph_Algorithms/README.md",
+      "x": 520,
+      "y": 820,
+      "width": 360,
+      "height": 220,
+      "color": "1"
+    },
+    {
+      "id": "m08",
+      "type": "file",
+      "file": "ComProg/08_Trees_and_LCA/README.md",
+      "x": 940,
+      "y": 820,
+      "width": 360,
+      "height": 220,
+      "color": "1"
+    },
+    {
+      "id": "m09",
+      "type": "file",
+      "file": "ComProg/09_Mathematics_and_Number_Theory/README.md",
+      "x": 100,
+      "y": 1120,
+      "width": 360,
+      "height": 220,
+      "color": "3"
+    },
+    {
+      "id": "m10",
+      "type": "file",
+      "file": "ComProg/10_String_Algorithms/README.md",
+      "x": 520,
+      "y": 1120,
+      "width": 360,
+      "height": 220,
+      "color": "5"
+    },
+    {
+      "id": "m11",
+      "type": "file",
+      "file": "ComProg/11_Advanced_and_Niche_Techniques/README.md",
+      "x": 940,
+      "y": 1120,
+      "width": 360,
+      "height": 220,
+      "color": "6"
+    },
+    {
+      "id": "m12",
+      "type": "file",
+      "file": "ComProg/12_Reference_and_Catalog/codeforces_catalog_full.md",
+      "x": 500,
+      "y": 1420,
+      "width": 400,
+      "height": 240,
+      "color": "4"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e0",
+      "fromNode": "home",
+      "fromSide": "bottom",
+      "toNode": "m00",
+      "toSide": "top"
+    },
+    {
+      "id": "e1",
+      "fromNode": "home",
+      "fromSide": "bottom",
+      "toNode": "m01",
+      "toSide": "top"
+    },
+    {
+      "id": "e2",
+      "fromNode": "home",
+      "fromSide": "bottom",
+      "toNode": "m02",
+      "toSide": "top"
+    },
+    {
+      "id": "e3",
+      "fromNode": "m01",
+      "fromSide": "bottom",
+      "toNode": "m03",
+      "toSide": "top"
+    },
+    {
+      "id": "e4",
+      "fromNode": "m01",
+      "fromSide": "bottom",
+      "toNode": "m04",
+      "toSide": "top"
+    },
+    {
+      "id": "e5",
+      "fromNode": "m04",
+      "fromSide": "bottom",
+      "toNode": "m05",
+      "toSide": "top"
+    },
+    {
+      "id": "e6",
+      "fromNode": "m04",
+      "fromSide": "bottom",
+      "toNode": "m06",
+      "toSide": "top"
+    },
+    {
+      "id": "e7",
+      "fromNode": "m05",
+      "fromSide": "bottom",
+      "toNode": "m07",
+      "toSide": "top"
+    },
+    {
+      "id": "e8",
+      "fromNode": "m07",
+      "fromSide": "right",
+      "toNode": "m08",
+      "toSide": "left"
+    },
+    {
+      "id": "e9",
+      "fromNode": "m01",
+      "fromSide": "bottom",
+      "toNode": "m09",
+      "toSide": "top"
+    },
+    {
+      "id": "e10",
+      "fromNode": "m05",
+      "fromSide": "bottom",
+      "toNode": "m10",
+      "toSide": "top"
+    },
+    {
+      "id": "e11",
+      "fromNode": "m06",
+      "fromSide": "bottom",
+      "toNode": "m11",
+      "toSide": "top"
+    },
+    {
+      "id": "e12",
+      "fromNode": "m11",
+      "fromSide": "bottom",
+      "toNode": "m12",
+      "toSide": "top"
+    },
+    {
+      "id": "e13",
+      "fromNode": "m10",
+      "fromSide": "bottom",
+      "toNode": "m12",
+      "toSide": "top"
+    }
+  ]
+}

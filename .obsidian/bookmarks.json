@@ -1,0 +1,29 @@
+{
+  "items": [
+    {
+      "type": "file",
+      "title": "🏠 Dashboard / Map of Content",
+      "path": "Home.md"
+    },
+    {
+      "type": "file",
+      "title": "🗺️ Interactive Visual Roadmap (Canvas)",
+      "path": "ComProg_Roadmap.canvas"
+    },
+    {
+      "type": "file",
+      "title": "📚 Codeforces Catalog (Full Archive)",
+      "path": "12_Reference_and_Catalog/codeforces_catalog_full.md"
+    },
+    {
+      "type": "file",
+      "title": "⚡ Contest Template (Python)",
+      "path": "template.py"
+    },
+    {
+      "type": "file",
+      "title": "🐍 Python CP Survival Guide",
+      "path": "00_General_Advice_and_Practice/python_cp_guide.md"
+    }
+  ]
+}
