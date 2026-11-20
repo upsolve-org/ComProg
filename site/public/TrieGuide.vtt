@@ -1,0 +1,37 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:08.509
+A Trie, or prefix tree, stores a dictionary of strings by merging common prefixes along paths from a single root.
+
+00:00:08.509 --> 00:00:17.620
+Using parallel flat arrays of integer node indices instead of Python class objects keeps memory compact and lookups fast.
+
+00:00:17.620 --> 00:00:25.000
+Stepping through a word of length L takes at most L array accesses independent of dictionary size.
+
+00:00:25.300 --> 00:00:34.002
+Increment a pass counter on every node visited during insertion to know immediately how many dictionary words share that prefix.
+
+00:00:34.002 --> 00:00:40.121
+Mark an end counter at the final node to distinguish complete words from partial prefixes.
+
+00:00:40.121 --> 00:00:45.900
+Prefix autocomplete and frequency queries then finish in a single walk down the word.
+
+00:00:46.200 --> 00:00:57.100
+Treating thirty-bit or sixty-bit integers as fixed-length binary strings from most significant bit to least significant bit creates a Binary Trie.
+
+00:00:57.100 --> 00:01:01.580
+Each node has only two child slots for bit zero and bit one.
+
+00:01:01.580 --> 00:01:09.120
+You can insert numbers, delete numbers via pass counts, and query bitwise relationships in O(B) time.
+
+00:01:09.433 --> 00:01:17.304
+To find which number in the set maximizes XOR with a query x, walk down the Binary Trie from the highest bit to the lowest bit.
+
+00:01:17.304 --> 00:01:24.058
+At each bit position, greedily step into the child holding the opposite bit of x whenever that branch exists.
+
+00:01:24.058 --> 00:01:28.644
+Securing a one in a higher bit position outweighs all lower bits combined.

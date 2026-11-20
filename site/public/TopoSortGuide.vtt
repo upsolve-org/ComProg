@@ -1,0 +1,37 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:08.794
+Topological sorting orders the vertices of a directed acyclic graph so every directed edge points forward in the sequence.
+
+00:00:08.794 --> 00:00:16.290
+Prerequisite tasks, course schedules, and dynamic programming transitions all rely on topological order.
+
+00:00:16.290 --> 00:00:21.480
+If the graph contains a directed cycle, no valid linear ordering exists.
+
+00:00:21.800 --> 00:00:28.383
+Kahn's algorithm tracks the indegree of every vertex and pushes all zero-indegree starters into a queue.
+
+00:00:28.383 --> 00:00:36.866
+Pop a vertex, append it to the ordering, and decrement the indegrees of its outgoing neighbors, enqueuing any neighbor that hits zero.
+
+00:00:36.866 --> 00:00:41.360
+If fewer than V nodes are emitted, a cycle blocked the remaining nodes.
+
+00:00:41.667 --> 00:00:51.266
+When a problem asks for the lexicographically smallest valid topological order, replace Kahn's FIFO deque with a min-heap.
+
+00:00:51.266 --> 00:00:56.460
+Always pop the smallest available zero-indegree vertex label next.
+
+00:00:56.460 --> 00:01:03.227
+Heap operations add only a logarithmic factor while enforcing the exact priority rule.
+
+00:01:03.533 --> 00:01:10.353
+Once you have the topological array, any path-counting or longest-path query becomes a single forward loop.
+
+00:01:10.353 --> 00:01:16.344
+Iterate vertices in topological order and push each node's DP value across its outgoing edges.
+
+00:01:16.344 --> 00:01:22.144
+Acyclicity guarantees every incoming transition is finalized before a vertex pushes onward.

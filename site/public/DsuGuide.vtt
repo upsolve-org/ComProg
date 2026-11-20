@@ -1,0 +1,37 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:06.971
+A Disjoint Set Union maintains a collection of non-overlapping sets under dynamic edge additions.
+
+00:00:06.971 --> 00:00:12.146
+Each component forms a directed tree rooted at a representative element.
+
+00:00:12.146 --> 00:00:17.320
+Two nodes belong to the same component if and only if they share a root.
+
+00:00:17.633 --> 00:00:24.240
+During a find operation, redirect every visited node on the path so it points directly to the root.
+
+00:00:24.240 --> 00:00:27.910
+Path compression flattens tall chains into broad stars.
+
+00:00:27.910 --> 00:00:31.913
+Future queries on those nodes finish in almost a single hop.
+
+00:00:32.233 --> 00:00:38.415
+When merging two roots, attach the smaller tree underneath the root of the larger tree.
+
+00:00:38.415 --> 00:00:43.175
+Union by size keeps tree depth logarithmic even before compression.
+
+00:00:43.175 --> 00:00:48.433
+Combined with path compression, operations run in amortized constant time.
+
+00:00:48.767 --> 00:00:56.742
+Store extra metadata such as component size, minimum element, or parity at each root and merge it during union.
+
+00:00:56.742 --> 00:01:03.137
+When a problem deletes edges, process the operations in reverse order as edge insertions.
+
+00:01:03.137 --> 00:01:07.018
+DSU turns dynamic connectivity into fast root lookups.

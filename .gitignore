@@ -44,3 +44,6 @@ venv.bak/
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
 .obsidian/cache/
+
+# Website
+node_modules/

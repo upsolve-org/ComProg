@@ -1,5 +1,37 @@
-# Competitive Programming in Python: From Scratch to Mastery
+# ComProg
 
+ComProg is a self-paced competitive programming course in Python. Its 12 teaching chapters follow a sequence of concepts, worked implementations, and an assignment. Use the lesson menu or the previous and next controls to move through a chapter. Drafts, lesson positions, and accepted assignments are saved in the browser.
+
+## Run the website
+
+Requires Node.js 24 or later.
+
+```sh
+npm ci
+npm run dev
+```
+
+Open [localhost:3000](http://127.0.0.1:3000). For a production build, run `npm run build` followed by `npm start` behind your reverse proxy. Run executes Python with your custom input in an isolated browser worker using Pyodide from jsDelivr.
+
+### Enable submissions
+
+Use a dedicated host with a rootless Linux Docker engine, load a trusted Python image such as `python:3.12-slim`, and set `JUDGE_IMAGE` in `.env` to the loaded image tag or digest. The course server uses that Docker context. Restart it after configuring the image.
+
+Submit runs each hidden input in a fresh, resource-limited container. The browser receives only a verdict and, when applicable, whether the failure occurred during a correctness or large-input check. Large inputs can catch approaches that do too much work. Passing them does not prove an asymptotic bound. With no judge image configured, learners can still read lessons and run custom inputs.
+
+To enable OpenCode hint selection, copy `.env.example` to `.env` and provide a server-side OpenCode Console API key. The default endpoint uses the chat-completions API. Override `OPENCODE_ENDPOINT` and `OPENCODE_MODEL` together if your deployment uses a different compatible endpoint. OpenCode receives the question, exercise statement, and available hints. The UI displays a reviewed question selected by the model, or a course hint if inference is unavailable.
+
+Run `npm test` to verify tutor and judge behavior.
+
+## Edit the course
+
+Every taught guide across all 13 modules includes a full-width Manim video with Gemini narration, English WebVTT captions, clickable chapter timestamps, narration transcripts, and the full written lesson. Each chapter also includes interactive multiple-choice concept quizzes alongside the end-of-chapter coding assignment. The rendered media ships with the website. Playback uses the local assets and requires no Gemini credential.
+
+To regenerate the videos, edit the scripts in `site/video/lessons.json`. With `GEMINI_API_KEY` set in your shell, run `node site/video/narrate.mjs <audio-directory>`. Set `AUDIO_DIR` to that directory, then render scenes from `site/video/scenes.py` with `manim -qm` using Manim Community 0.22. Copy the rendered MP4s into `site/public` and rebuild. Rendering also refreshes the WebVTT captions there.
+
+The site reads the numbered folders' `README.md` and individual notes. Duplicate module indexes, vault navigation, raw Python files, and planning documents are outside the built site. Edit chapter quizzes in [site/quizzes.mjs](site/quizzes.mjs), exercise statements and tutor hints in [site/labs.mjs](site/labs.mjs), and additional hidden checks in [site/judge-cases.mjs](site/judge-cases.mjs). Rebuild when course content changes.
+
+## Original curriculum
 Welcome to your complete, hands-on Competitive Programming repository built from scratch in Python!
 
 This repository is modeled directly on the curated knowledge tree of the **[Codeforces Catalog](https://codeforces.com/catalog)**. It provides structured folders, battle-tested Python templates, clear explanations, complexity guides, and practical test cases for every core topic in competitive programming.

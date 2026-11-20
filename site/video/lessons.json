@@ -1,0 +1,904 @@
+{
+  "PythonGuide": [
+    [
+      "Choose a runtime",
+      ["Python source", "CPython", "PyPy JIT"],
+      "CPython and PyPy run the same Python program. PyPy can speed up a long loop after its compiler warms up. Compare both on representative inputs when the contest supports them."
+    ],
+    [
+      "Read the input",
+      ["3  7  9", "split", "3    7    9"],
+      "Splitting a buffer turns whitespace-separated input into tokens. Bulk reading is convenient, but holds the whole input in memory. Read a line at a time if the file is large."
+    ],
+    [
+      "Count the work",
+      ["1,000 items", "nested scan", "1,000,000 visits"],
+      "A thousand items scanned a thousand times means a million visits. Changing interpreters cannot remove that repeated work. First look for a way to reuse a result."
+    ],
+    [
+      "Choose an operation",
+      ["front of a list", "shift items", "deque.popleft()"],
+      "Removing the first item of a list shifts the rest. A deque supports removal at either end in constant time. Choose the structure around the operation you repeat."
+    ]
+  ],
+  "ContestGuide": [
+    [
+      "Choose a round",
+      ["contest listing", "division", "round rules"],
+      "Start with the division and eligibility rules in the round announcement. Division four often offers an accessible starting point. Virtual participation lets you practice a past round against the clock."
+    ],
+    [
+      "Read the standings",
+      ["points round", "earlier solve", "more points"],
+      "In a points-based round, the time of acceptance can affect the score. In an ICPC-style round, teams are ranked first by problems solved, then by penalty time. Check the rules for your event."
+    ],
+    [
+      "Trace a submission",
+      ["submission", "pretests", "system tests"],
+      "Passing pretests is provisional in rounds that use them. A later system test can expose a missed boundary or a slow approach. Try the smallest input and a case near the limit."
+    ],
+    [
+      "Upsolve after the round",
+      ["first failure", "small counterexample", "new submission"],
+      "After the round, find the first assumption that failed. Make a small counterexample, explain the fix, and solve the problem again before moving on."
+    ]
+  ],
+  "FastIoGuide": [
+    [
+      "Stream from standard input",
+      ["sys.stdin.read", "token iterator", "fast parsing"],
+      "Calling input inside a million-line loop adds per-line overhead in Python. Reading from sys.stdin buffers the stream and keeps I/O time predictable. Use a token iterator when numbers span multiple lines."
+    ],
+    [
+      "Batch standard output",
+      ["out = []", "append answers", "join('\\n')"],
+      "Printing inside a tight multi-test loop flushes the output stream repeatedly. Collect formatted answers in a list and join them with newlines at the end. Single-pass output avoids hidden time limit failures."
+    ],
+    [
+      "Match constraints to budget",
+      ["N <= 2e5", "O(N log N)", "1.0s limit"],
+      "Before writing code, translate the maximum input size into an operation budget. Two hundred thousand elements require linear or log-linear time to pass within one second. Reject quadratic ideas immediately when the bound is large."
+    ],
+    [
+      "Structure your template",
+      ["solve()", "test loop", "edge guards"],
+      "Isolate each test case inside a dedicated solve function so local variables stay fast and clean. Reset per-case state explicitly before reading the next test. Test single-element and boundary inputs before submitting."
+    ]
+  ],
+  "PrefixSumsGuide": [
+    [
+      "Build cumulative sums",
+      ["A[0..N-1]", "pref[i+1]", "O(N) build"],
+      "A prefix sum array stores cumulative totals from the start of the sequence. Padding with a leading zero aligns one-based prefixes cleanly with zero-based slices. Building the table takes a single linear pass."
+    ],
+    [
+      "Answer range sum queries",
+      ["query [L, R]", "pref[R+1] - pref[L]", "O(1) lookup"],
+      "Any contiguous range sum equals the prefix up to the right boundary minus the prefix before the left boundary. Thousands of range sum queries finish in constant time each. Never rescan the slice when the array is static."
+    ],
+    [
+      "Apply difference arrays",
+      ["diff[L] += v", "diff[R+1] -= v", "O(1) update"],
+      "A difference array is the inverse of a prefix sum. Adding a value to a range only touches the left endpoint and the index just past the right endpoint. After all updates finish, one prefix pass reconstructs the final array."
+    ],
+    [
+      "Extend to 2D grids",
+      ["top + left", "- overlap", "+ cell"],
+      "Two-dimensional prefix sums accumulate rectangle totals using inclusion-exclusion. Add the top and left rectangles, subtract the double-counted corner, and include the current cell. Subgrid queries then run in four arithmetic operations."
+    ]
+  ],
+  "BinarySearchGuide": [
+    [
+      "Spot a monotonic predicate",
+      ["False False", "boundary", "True True"],
+      "Binary search applies whenever a feasibility check flips once from false to true across sorted candidates. Instead of searching only inside an explicit array, search over the space of possible answers. Verify that if a capacity works, every larger capacity also works."
+    ],
+    [
+      "Maintain a loop invariant",
+      ["lo = invalid", "mid = (lo+hi)//2", "hi = valid"],
+      "Keep one pointer strictly on the invalid side and the other on the valid side. Halve the interval until the pointers sit on adjacent integers. Clear invariants eliminate off-by-one errors and infinite loops."
+    ],
+    [
+      "Use bisect on sorted arrays",
+      ["bisect_left", "first >= x", "bisect_right"],
+      "Python's bisect module locates insertion points in compiled C speed. Use bisect_left for the first index at least the target, and bisect_right for the first index strictly greater. Subtracting the two indices counts exact occurrences in logarithmic time."
+    ],
+    [
+      "Check precision on reals",
+      ["fixed steps", "80 iterations", "mid = (L+R)/2"],
+      "When binary searching floating-point coordinates, a while-loop on epsilon can stall due to precision limits. Run a fixed loop of sixty to eighty iterations instead. Each step halves the interval and guarantees high accuracy."
+    ]
+  ],
+  "TernarySearchGuide": [
+    [
+      "Recognize unimodal curves",
+      ["falling slope", "unique valley", "rising slope"],
+      "Ternary search optimizes functions that strictly decrease to a single minimum and then strictly increase. Convex cost functions and Euclidean distance sums often follow this unimodal shape. Confirm there are no flat plateaus before applying ternary search."
+    ],
+    [
+      "Split into three thirds",
+      ["m1 = L + d/3", "m2 = R - d/3", "compare f(m1), f(m2)"],
+      "Place two interior probes at one-third and two-thirds of the current interval. Evaluating the objective at both points reveals which outer third cannot hold the optimum. Discard the worse side and keep the remaining two-thirds."
+    ],
+    [
+      "Shrink the search range",
+      ["2/3 factor", "80 rounds", "tight optimum"],
+      "Each comparison shrinks the interval length to two-thirds of its previous size. Eighty iterations reduce a massive coordinate range down to machine precision. The check function only needs to evaluate the cost at a single point."
+    ],
+    [
+      "Handle integer domains",
+      ["R - L > 3", "narrow window", "scan remainder"],
+      "On discrete integer coordinates, integer division can cause the probes to collide when the range is small. Stop the ternary loop once the interval holds three or four integers. Finish by evaluating those few remaining candidates directly."
+    ]
+  ],
+  "TwoPointersGuide": [
+    [
+      "Exploit monotonic movement",
+      ["left pointer L", "right pointer R", "O(N) total steps"],
+      "Two pointers replace nested loops when moving one boundary forces the other boundary in a single direction. Because neither pointer ever steps backward, both traverse the array at most once. Total time drops from quadratic to linear."
+    ],
+    [
+      "Converge from opposite ends",
+      ["L = 0", "sum vs target", "R = N - 1"],
+      "On a sorted array, start pointers at the minimum and maximum elements. If their sum is too small, advance the left pointer; if too large, retreat the right pointer. Each comparison eliminates an entire row or column of pairs."
+    ],
+    [
+      "Chase in the same direction",
+      ["expand R", "violate limit", "advance L"],
+      "For subarray constraints, advance the right pointer step by step to include new elements. Whenever the current segment violates the condition, advance the left pointer until validity returns. Every right endpoint immediately records its furthest valid left partner."
+    ],
+    [
+      "Merge and deduplicate",
+      ["stream A", "compare heads", "stream B"],
+      "Two pointers also synchronize two sorted sequences in a single linear sweep. Always advance the pointer holding the smaller element to merge or intersect sets. Skip equal neighbors on the fly when unique pairs are required."
+    ]
+  ],
+  "SlidingWindowGuide": [
+    [
+      "Maintain a live window state",
+      ["enter at R", "window accumulator", "leave at L"],
+      "A sliding window views a contiguous subarray as a live state that updates incrementally. Add the incoming element on the right and remove the outgoing element on the left. Incremental updates avoid recomputing the window from scratch."
+    ],
+    [
+      "Slide a fixed-length window",
+      ["length K", "+ A[i]", "- A[i - K]"],
+      "When the window size is fixed at K, initialize the state with the first K elements. Slide one position right by adding the new element and subtracting the element K steps back. Track the best aggregate after every single shift."
+    ],
+    [
+      "Shrink a variable window",
+      ["grow window", "freq / sum check", "restore invariant"],
+      "For longest or shortest valid subarray problems, expand the right boundary and update your frequency map or sum. Use a while-loop to advance the left boundary whenever the invariant breaks. Record the optimal length when the window is valid."
+    ],
+    [
+      "Count valid subarrays",
+      ["valid [L..R]", "R - L + 1 ends", "accumulate count"],
+      "When every subsegment inside a valid window is also valid, fixing the right endpoint counts all matching left endpoints at once. A valid window from L to R contributes R minus L plus one subarrays ending at R. Sum these counts across the sweep."
+    ]
+  ],
+  "SortingGuide": [
+    [
+      "Order before you scan",
+      ["unsorted data", "timsort O(N log N)", "adjacent structure"],
+      "Sorting brings equal and nearby values together so global relationships become local checks. Python's built-in Timsort runs in O(N log N) and exploits existing order in the input. Most sweep-line and greedy algorithms begin with a sort."
+    ],
+    [
+      "Craft custom sort keys",
+      ["key=lambda x", "(x[1], -x[0])", "tuple tie-break"],
+      "Pass a key function that maps each item to a lightweight comparison tuple. Negate numeric fields when you need descending order on a secondary tie-breaker. Avoid slow comparator functions when a direct tuple key suffices."
+    ],
+    [
+      "Sweep events across a line",
+      ["(start, +1)", "sort events", "(end, -1)"],
+      "Convert intervals into start and end events, then sort all events by coordinate. Maintain an active counter as you sweep from left to right. Order tie-breaking deltas carefully depending on whether endpoints are inclusive or exclusive."
+    ],
+    [
+      "Compress large coordinates",
+      ["sparse values", "sorted unique", "dense rank 0..K"],
+      "When values reach a billion but the count of items is small, replace each number with its rank in sorted unique order. Coordinate compression maps sparse values into a compact zero-based array. Data structures like Fenwick trees can then index them directly."
+    ]
+  ],
+  "GreedyGuide": [
+    [
+      "Make a locally optimal choice",
+      ["sort candidates", "commit best", "never backtrack"],
+      "A greedy algorithm commits to the best immediate option at each step without backtracking. Unlike dynamic programming, it explores only a single path of decisions. Because choices are permanent, the ordering criterion must be proven sound."
+    ],
+    [
+      "Schedule by earliest finish",
+      ["sort by end", "check start >= last", "maximize count"],
+      "In classic interval scheduling, sorting tasks by earliest finish time leaves the maximum room for future intervals. Always pick the next compatible interval that finishes soonest. Sorting by earliest start or shortest duration fails on simple counterexamples."
+    ],
+    [
+      "Prove via exchange argument",
+      ["optimal solution", "swap adjacent", "no worse cost"],
+      "Justify a greedy rule with an exchange argument before trusting it in a contest. Compare a hypothetical optimal schedule against your greedy choice and show that swapping them never hurts the objective. Test small random inputs against brute force to catch flaws early."
+    ],
+    [
+      "Adapt choices with a heap",
+      ["push option", "heapq.heappop", "regret swap"],
+      "Some greedy problems require dynamic re-ordering or regret adjustments as new items arrive. Maintain chosen items in a min-heap or max-heap so you can replace the worst commitment in logarithmic time. Regret greedy combines local speed with global flexibility."
+    ]
+  ],
+  "DsuGuide": [
+    [
+      "Track disjoint components",
+      ["parent[x] = x", "find root", "union sets"],
+      "A Disjoint Set Union maintains a collection of non-overlapping sets under dynamic edge additions. Each component forms a directed tree rooted at a representative element. Two nodes belong to the same component if and only if they share a root."
+    ],
+    [
+      "Flatten with path compression",
+      ["climb to root", "relink parent", "shallow tree"],
+      "During a find operation, redirect every visited node on the path so it points directly to the root. Path compression flattens tall chains into broad stars. Future queries on those nodes finish in almost a single hop."
+    ],
+    [
+      "Balance via union by size",
+      ["compare sizes", "small -> large", "inverse Ackermann"],
+      "When merging two roots, attach the smaller tree underneath the root of the larger tree. Union by size keeps tree depth logarithmic even before compression. Combined with path compression, operations run in amortized constant time."
+    ],
+    [
+      "Maintain component invariants",
+      ["size[root]", "component count", "offline queries"],
+      "Store extra metadata such as component size, minimum element, or parity at each root and merge it during union. When a problem deletes edges, process the operations in reverse order as edge insertions. DSU turns dynamic connectivity into fast root lookups."
+    ]
+  ],
+  "FenwickGuide": [
+    [
+      "Isolate the lowest set bit",
+      ["idx & -idx", "power of two", "block length"],
+      "A Fenwick tree, or Binary Indexed Tree, indexes prefix blocks using the lowest set bit of each one-based index. The expression i bitwise-and negative i isolates the largest power of two dividing i. Each slot stores the sum of a block of that exact length."
+    ],
+    [
+      "Query prefix sums in log N",
+      ["sum += bit[i]", "i -= i & -i", "O(log N) hops"],
+      "To compute a prefix sum up to index i, add the current slot and strip its lowest set bit repeatedly until reaching zero. Because an integer has at most log N set bits, the loop finishes in a handful of iterations. Range sums follow by subtracting two prefix queries."
+    ],
+    [
+      "Propagate point updates",
+      ["bit[i] += delta", "i += i & -i", "update ancestors"],
+      "When element i changes by delta, add the lowest set bit to i at each step to visit every block covering that position. A flat array and simple bit arithmetic keep the constant factor tiny in Python. Point updates and prefix queries both run in logarithmic time."
+    ],
+    [
+      "Count inversions on the fly",
+      ["compress values", "query seen > x", "add current x"],
+      "Fenwick trees excel at counting inversions or dynamic order statistics during a left-to-right sweep. Query how many previously seen values exceed the current element, then insert the current element into the tree. Each step takes logarithmic time over compressed ranks."
+    ]
+  ],
+  "SegmentTreeGuide": [
+    [
+      "Partition into binary ranges",
+      ["[0..N-1] root", "left & right", "2N iterative array"],
+      "A segment tree divides an array recursively into power-of-two subsegments stored in a binary tree. An iterative segment tree places leaves at indices N through 2N minus one and internal parents at index i divided by two. This flat layout avoids recursion overhead in Python."
+    ],
+    [
+      "Update a leaf and pull up",
+      ["tree[p + N] = v", "p >>= 1", "merge children"],
+      "To update a single element, write the new value at its leaf position and walk upward to the root. At each parent, recompute the aggregate from its left and right children. Only the O(log N) ancestors along the path are touched."
+    ],
+    [
+      "Fold disjoint query intervals",
+      ["L += N, R += N", "collect odd ends", "L >>= 1, R >>= 1"],
+      "To query an arbitrary range, start at the leaf boundaries and climb toward the root from both sides. Whenever a left boundary is a right child or a right boundary is a left child, fold that node into the answer and step inward. At most two nodes are combined per tree level."
+    ],
+    [
+      "Choose an associative merge",
+      ["sum or min/max", "gcd or xor", "associative op"],
+      "Segment trees work with any associative operation, including minimum, maximum, greatest common divisor, or matrix products. Define the identity element carefully so empty sub-queries never corrupt the result. Use lazy propagation when whole ranges must be updated at once."
+    ]
+  ],
+  "MonotonicGuide": [
+    [
+      "Keep the stack ordered",
+      ["incoming x", "pop dominated", "push x"],
+      "A monotonic stack maintains elements in strictly increasing or decreasing order as you scan an array. Before pushing a new element, pop every top element that is worse and older. Each element is pushed once and popped at most once, guaranteeing linear time."
+    ],
+    [
+      "Find next greater elements",
+      ["decreasing stack", "A[i] > top", "resolve index"],
+      "When searching for the next greater element to the right, keep a decreasing stack of unresolved indices. As soon as a larger value arrives, it resolves and pops all smaller items at the top of the stack. The item remaining below becomes the nearest greater neighbor on the left."
+    ],
+    [
+      "Slide a monotonic deque",
+      ["evict old front", "pop worse back", "front = extremum"],
+      "A monotonic deque extends the stack by also evicting expired indices from the front as a window slides. Maintain indices in decreasing order of value so the front always holds the current window maximum. Sliding window minimum and maximum queries then run in amortized O(1) per step."
+    ],
+    [
+      "Bound maximal rectangles",
+      ["bar height h", "left boundary", "right boundary"],
+      "In histogram and grid problems, each bar wants to know how far left and right it can extend without meeting a shorter bar. A monotonic stack finds both boundaries for every bar in a single pass. Multiply each bar's height by its maximal span to find the largest area."
+    ]
+  ],
+  "OrderedSetGuide": [
+    [
+      "Bridge Python's missing tree",
+      ["no std::set", "coordinate rank", "Fenwick + bisect"],
+      "Python's standard library does not include a balanced binary search tree like C++ std::set. When updates and order-statistic queries interleave, naive list insertions degrade to linear time per operation. We emulate an ordered set using a Fenwick tree or square-root buckets."
+    ],
+    [
+      "Index frequencies in a BIT",
+      ["compress keys", "insert: +1", "delete: -1"],
+      "If all possible keys are known ahead of time, sort and deduplicate them into compressed ranks. Maintain a Fenwick tree of counts where inserting adds one and deleting subtracts one. Prefix queries immediately report how many active elements are smaller than any key."
+    ],
+    [
+      "Lift by binary powers for k-th",
+      ["step = 2^p", "check bit[idx+step]", "O(log N) walk"],
+      "To find the k-th smallest active element, binary-lift directly down the Fenwick tree array. Step by decreasing powers of two whenever the cumulative count stays below k. This single logarithmic walk avoids an extra factor of log N from outer binary search."
+    ],
+    [
+      "Bucket for fully online inserts",
+      ["sqrt blocks", "bisect block", "rebalance split"],
+      "When keys cannot be known offline, partition the sorted elements into blocks of size roughly square root of N. Locate the target block and position with bisect, and split any block that grows too large. This sorted-list design runs fast in pure Python."
+    ]
+  ],
+  "KnapsackGuide": [
+    [
+      "Define the subset state",
+      ["item index i", "capacity w", "best value dp[w]"],
+      "Zero-one knapsack asks which subset of items maximizes value without exceeding a capacity limit. A naive recursion branches into two choices per item and explodes exponentially. Dynamic programming records the best result for each reachable weight so overlapping states are solved once."
+    ],
+    [
+      "Sweep capacity backward for 0/1",
+      ["for w in W..wt", "dp[w - wt] + val", "use item once"],
+      "In a one-dimensional DP array, iterate capacity from maximum down to the item's weight. Sweeping backward ensures each transition reads values from the previous item's layer rather than reusing the current item twice. Memory drops to a single flat list of length W plus one."
+    ],
+    [
+      "Sweep forward for unbounded use",
+      ["for w in wt..W", "reuse current item", "coin change"],
+      "When each item or coin can be chosen an unlimited number of times, reverse the inner loop to run forward from weight to W. Forward iteration intentionally builds upon states that already include the current item. Always check whether item reuse is allowed before ordering your loops."
+    ],
+    [
+      "Pack reachable sums in a bitset",
+      ["bits = 1", "bits |= bits << w", "fast subset sum"],
+      "For boolean subset sum queries in Python, represent all reachable sums as set bits inside a single big integer. Processing a weight w becomes a single bitwise shift and OR operation: bits equals bits OR bits shifted left by w. Python shifts arbitrary-precision integers at C speed."
+    ]
+  ],
+  "GridDpGuide": [
+    [
+      "Order states topologically",
+      ["row r, col c", "from top (r-1,c)", "from left (r,c-1)"],
+      "When movement on a grid is restricted to right and down, dependencies form a directed acyclic graph. Row-by-row and column-by-column iteration visits every parent state before its dependents. Each cell combines the optimal answers from its top and left neighbors."
+    ],
+    [
+      "Handle obstacles and boundaries",
+      ["blocked cell -> 0", "first row/col", "mod 10^9 + 7"],
+      "Blocked cells cannot be entered, so set their path count to zero or their cost to infinity immediately. Initialize the starting corner first and propagate along the top row and left column carefully. Apply modular arithmetic at each addition when counting total paths."
+    ],
+    [
+      "Roll rows to save memory",
+      ["prev_row", "curr_row", "O(C) memory"],
+      "Because row r only reads from row r minus one and the current row, you never need to keep the entire grid in memory. Maintain a single one-dimensional array of length C and update it across columns. Rolling arrays cut memory from O(R times C) to O(C) and improve cache locality."
+    ],
+    [
+      "Reconstruct the optimal path",
+      ["parent choice", "backtrack (R,C)", "reverse moves"],
+      "When a problem asks for the actual sequence of moves, compare the top and left transitions or store a compact direction flag. Backtrack from the destination corner to the start by following the winning predecessor at each step. Reverse the collected steps to output the path in forward order."
+    ]
+  ],
+  "LisLcsGuide": [
+    [
+      "Maintain minimal patience tails",
+      ["tails[len]", "smallest end", "monotonic tails"],
+      "A quadratic loop for Longest Increasing Subsequence is too slow when N reaches two hundred thousand. Instead, maintain an array tails where tails[k] holds the smallest possible ending value of an increasing subsequence of length k plus one. Because tails stays sorted, we can update it with binary search."
+    ],
+    [
+      "Binary search each incoming value",
+      ["bisect_left(tails, x)", "replace or append", "O(N log N) LIS"],
+      "For each element x, use bisect_left on tails to find the first ending value greater than or equal to x. Replace that entry to keep future extensions as easy as possible, or append x if it extends the longest chain. Use bisect_right instead when non-decreasing subsequences are allowed."
+    ],
+    [
+      "Align prefixes for LCS",
+      ["match A[i]==B[j]", "1 + dp[i-1][j-1]", "max(skip A, skip B)"],
+      "Longest Common Subsequence compares prefixes of two strings A and B on a two-dimensional grid. When the current characters match, extend the diagonal state by one; otherwise take the maximum of skipping either character. Keep only two rows in memory when only the final length is required."
+    ],
+    [
+      "Transform edit distance costs",
+      ["insert +1", "delete +1", "replace +0/1"],
+      "Edit distance generalizes LCS by assigning explicit costs to insertion, deletion, and substitution. Transition from the top, left, and diagonal neighbors by taking the minimum cost among all three operations. This same alignment table powers diff tools and approximate string matching."
+    ]
+  ],
+  "IntervalDpGuide": [
+    [
+      "Solve short subsegments first",
+      ["length len = 1..N", "left L", "right R = L+len-1"],
+      "Interval dynamic programming solves problems where a sequence is reduced by merging or splitting contiguous ranges. Because wide intervals depend on narrower ones, the outer loop must iterate over increasing interval length. Fixing length and left endpoint determines the right endpoint immediately."
+    ],
+    [
+      "Try every split point k",
+      ["dp[L][k]", "+ dp[k+1][R]", "+ merge cost"],
+      "To evaluate interval L to R, iterate a split point k across all positions between L and R. Combine the optimal solutions for the left sub-interval and right sub-interval plus the cost of the final merge. Three nested loops yield a cubic O(N cubed) runtime suited for N up to four hundred."
+    ],
+    [
+      "Match endpoints on palindromes",
+      ["S[L] == S[R]", "shrink to [L+1, R-1]", "else split range"],
+      "In palindrome and bracket deletion problems, check whether the outer characters at L and R can pair together. Matching endpoints let you transition directly from the inner interval L plus one to R minus one. Take the best result across both endpoint pairing and mid-interval splitting."
+    ],
+    [
+      "Double the array for circular rings",
+      ["A + A (2N)", "windows of len N", "best cycle split"],
+      "When items sit on a circular ring rather than a straight line, concatenate the array with itself to form a sequence of length 2N. Run standard interval DP on segments up to length N across the doubled array. The optimal answer over all length-N windows solves the circular problem."
+    ]
+  ],
+  "TreeDpGuide": [
+    [
+      "Root the tree arbitrarily",
+      ["pick root 0", "parent -> children", "bottom-up order"],
+      "An unrooted tree becomes a hierarchy as soon as you pick an arbitrary node as the root. Information then flows cleanly from leaves upward to their parents. Establish parent-child edges first so transitions never revisit the parent node."
+    ],
+    [
+      "Flatten recursion into a stack",
+      ["iterative order", "reverse post-order", "avoid RecursionError"],
+      "Deep trees with two hundred thousand nodes can trigger Python's recursion limit and high function-call overhead. Build a breadth-first or stack traversal list first, then iterate through that list in reverse order. Reverse traversal guarantees every child is processed before its parent."
+    ],
+    [
+      "Combine child subtrees",
+      ["dp[u][0] exclude", "dp[u][1] include", "fold children"],
+      "At each node u, accumulate child DP values into states such as taking u versus skipping u. For tree diameter or maximum independent set, each child contributes in constant time to its parent's state. The whole bottom-up pass finishes in linear O(N) time."
+    ],
+    [
+      "Reroot in a second top-down pass",
+      ["subtree down[u]", "complement up[u]", "all-roots O(N)"],
+      "When a problem asks for the answer assuming every node takes a turn as the root, run a second top-down pass. Pass the parent's outside contribution down to each child using prefix and suffix products of sibling results. All N root answers are computed in total linear time."
+    ]
+  ],
+  "BitmaskDpGuide": [
+    [
+      "Encode subsets as integers",
+      ["N <= 20 items", "mask in 0..2^N-1", "bit i = item i"],
+      "When N is twenty or smaller, represent any subset of items as an N-bit integer mask. Bit i is one if item i belongs to the subset and zero otherwise. Bitwise operations test membership, add elements, and remove elements in a single CPU instruction."
+    ],
+    [
+      "Iterate masks in topological order",
+      ["mask 0 -> 2^N-1", "submask < mask", "mask | (1 << nxt)"],
+      "Because setting a new bit always produces a strictly larger integer, iterating masks from zero up to two to the N minus one is naturally topological. From a valid state, transition to each unset bit using bitwise OR with one shifted left by next. Flatten 2D tables into 1D lists when speed is tight."
+    ],
+    [
+      "Eliminate permutations",
+      ["N! permutations", "2^N * N states", "TSP / assignment"],
+      "Checking all permutations of twenty items takes over two quintillion steps, whereas bitmask DP uses only twenty million operations. Only the set of visited items and possibly the last item matter for future choices. Compressing ordering history into a subset mask makes NP-hard tours tractable."
+    ],
+    [
+      "Enumerate submasks or SOS DP",
+      ["sub = (sub-1) & m", "3^N submask walk", "N * 2^N SOS DP"],
+      "To iterate over all submasks of a mask m, repeatedly set sub to sub minus one bitwise-and m; across all masks this takes O(3 to the N) total steps. When summing over all subsets for every mask, Sum Over Subsets DP propagates one bit position at a time in O(N times 2 to the N)."
+    ]
+  ],
+  "GraphTraversalGuide": [
+    [
+      "Build adjacency lists",
+      ["adj = [[] for _]", "directed / undirected", "O(V + E) memory"],
+      "Represent sparse contest graphs with a list of neighbor lists indexed by vertex number. Adjacency matrices waste quadratic memory when vertices reach one hundred thousand. Always add both endpoints for undirected edges and only the forward arrow for directed edges."
+    ],
+    [
+      "Explore layers with BFS",
+      ["collections.deque", "mark on enqueue", "unweighted shortest"],
+      "Breadth-first search uses a deque to visit vertices in increasing order of edge distance from the source. Mark a vertex visited at the moment you push it into the queue, not when you pop it, to prevent duplicate queue entries. BFS computes exact shortest paths in unweighted graphs."
+    ],
+    [
+      "Traverse components with DFS",
+      ["explicit stack", "connected components", "2-color bipartite"],
+      "Depth-first search plunges along a path to discover connected components, cycles, and bipartite two-colorings. In Python, use an explicit list as a stack instead of deep recursion so skewed chain graphs never crash. Alternate colors zero and one across edges to detect odd cycles."
+    ],
+    [
+      "Launch multi-source and 0-1 BFS",
+      ["seed all sources", "weight 0 -> appendleft", "weight 1 -> append"],
+      "When distances are measured from the nearest of many starting points, seed all sources into the queue at distance zero before starting BFS. If edge weights are only zero or one, push zero-weight transitions to the front of the deque and one-weight transitions to the back for linear-time shortest paths."
+    ]
+  ],
+  "TopoSortGuide": [
+    [
+      "Model dependencies as a DAG",
+      ["u before v", "directed edge u->v", "acyclic requirement"],
+      "Topological sorting orders the vertices of a directed acyclic graph so every directed edge points forward in the sequence. Prerequisite tasks, course schedules, and dynamic programming transitions all rely on topological order. If the graph contains a directed cycle, no valid linear ordering exists."
+    ],
+    [
+      "Peel zero-indegree nodes (Kahn's)",
+      ["indegree[v] == 0", "pop and decrement", "check len == V"],
+      "Kahn's algorithm tracks the indegree of every vertex and pushes all zero-indegree starters into a queue. Pop a vertex, append it to the ordering, and decrement the indegrees of its outgoing neighbors, enqueuing any neighbor that hits zero. If fewer than V nodes are emitted, a cycle blocked the remaining nodes."
+    ],
+    [
+      "Order lexicographically with a heap",
+      ["heapq min-heap", "smallest available", "deterministic tie-break"],
+      "When a problem asks for the lexicographically smallest valid topological order, replace Kahn's FIFO deque with a min-heap. Always pop the smallest available zero-indegree vertex label next. Heap operations add only a logarithmic factor while enforcing the exact priority rule."
+    ],
+    [
+      "Propagate DP along the DAG",
+      ["for u in topo", "relax u -> v", "longest path / counts"],
+      "Once you have the topological array, any path-counting or longest-path query becomes a single forward loop. Iterate vertices in topological order and push each node's DP value across its outgoing edges. Acyclicity guarantees every incoming transition is finalized before a vertex pushes onward."
+    ]
+  ],
+  "DijkstraGuide": [
+    [
+      "Require non-negative edge weights",
+      ["w(u, v) >= 0", "dist[src] = 0", "greedy frontier"],
+      "Dijkstra's algorithm finds single-source shortest paths when every edge weight is zero or positive. Initialize the source distance to zero and all other distances to infinity. Because weights are non-negative, the closest unfinalized vertex on the frontier can never be improved later."
+    ],
+    [
+      "Pop the closest frontier node",
+      ["heappop (d, u)", "if d > dist[u]: skip", "lazy deletion"],
+      "Use Python's heapq module to store candidate pairs of distance and vertex. Because heapq has no decrease-key operation, push a fresh tuple whenever a shorter path is found. Immediately discard stale heap entries whose popped distance exceeds the current best dist[u]."
+    ],
+    [
+      "Relax outgoing edges",
+      ["nd = d + w", "if nd < dist[v]", "heappush (nd, v)"],
+      "For each outgoing edge from u to v with weight w, compare d plus w against dist[v]. Only update dist[v] and push to the heap when the new distance is strictly smaller. This strict check prevents duplicate heap pushes and keeps runtime at O((V + E) log V)."
+    ],
+    [
+      "Expand state-space graphs",
+      ["(node, coupons_used)", "layered transitions", "reconstruct parent"],
+      "Many contest problems allow K discounted edges, parity switches, or fuel states along the route. Encode the extra parameter directly into the vertex state and run standard Dijkstra on the expanded graph. Store a parent array whenever you need to reconstruct the winning path."
+    ]
+  ],
+  "BellmanFloydGuide": [
+    [
+      "Relax edges with negative weights",
+      ["V - 1 rounds", "for (u, v, w) in edges", "dist[u] + w < dist[v]"],
+      "When a graph contains negative edge weights, Dijkstra's greedy assumption breaks down. Bellman-Ford relaxes every edge in the graph across V minus one rounds, extending shortest paths by at least one hop per round. Early exit as soon as a full round produces no distance updates."
+    ],
+    [
+      "Detect negative cycles",
+      ["round V check", "still decreases?", "propagate -inf"],
+      "If any edge can still be relaxed on the V-th round, the graph contains a reachable negative-weight cycle. To find which destinations have arbitrarily small paths, seed all nodes improved on round V into a queue and run BFS. Every node reached by that BFS can achieve negative infinity cost."
+    ],
+    [
+      "Compute all-pairs with Floyd-Warshall",
+      ["outer pivot k", "inner i, inner j", "d[i][k] + d[k][j]"],
+      "For dense graphs up to four hundred vertices, Floyd-Warshall computes shortest paths between all pairs in three nested loops. The intermediate pivot vertex k must always be the outermost loop so paths build up through vertices zero to k in order. Cache the row d[i] and value d[i][k] outside the innermost loop for speed."
+    ],
+    [
+      "Check transitive closure and cycles",
+      ["d[i][i] < 0", "minimax / bottleneck", "edge addition update"],
+      "After Floyd-Warshall finishes, any negative value on the main diagonal d[i][i] reveals a negative cycle passing through vertex i. The same cubic triple loop also solves transitive reachability and widest bottleneck paths by swapping addition and minimum for the appropriate operators."
+    ]
+  ],
+  "MstGuide": [
+    [
+      "Connect all nodes at minimum cost",
+      ["V vertices", "V - 1 edges", "no cycles"],
+      "A Minimum Spanning Tree connects all V vertices of a weighted undirected graph using V minus one edges of minimum total weight. Removing any tree edge splits the graph, while adding any non-tree edge creates a unique cycle.By the cut property, the lightest edge crossing any partition cut belongs to an MST."
+    ],
+    [
+      "Sort edges for Kruskal's algorithm",
+      ["sort by weight w", "DSU union(u, v)", "O(E log E)"],
+      "Kruskal's algorithm sorts all edges by non-decreasing weight and scans them greedily. Use a Disjoint Set Union to test whether an edge's endpoints already belong to the same component; if not, unite them and add the edge cost. Stop as soon as V minus one edges have been accepted."
+    ],
+    [
+      "Grow a frontier with Prim's",
+      ["visited set", "min-heap of cut edges", "dense graphs"],
+      "Prim's algorithm grows a single tree from a starting vertex by repeatedly annexing the cheapest edge reaching an unvisited vertex. It mirrors Dijkstra's heap loop except the priority is the single edge weight rather than distance from the root. On dense complete graphs, an array-based O(V squared) Prim loop avoids sorting millions of edges."
+    ],
+    [
+      "Solve bottleneck and forest variants",
+      ["minimax path", "K components", "check connectivity"],
+      "Every path inside a Minimum Spanning Tree automatically minimizes the maximum edge weight along the route. If you stop Kruskal's algorithm after V minus K merges, you obtain the minimum-cost spanning forest of K clusters. Always verify that V minus one edges were chosen to confirm the graph is connected."
+    ]
+  ],
+  "BridgesGuide": [
+    [
+      "Track discovery and low-link times",
+      ["tin[u] = timer", "low[u] = min reach", "DFS tree + back-edges"],
+      "Tarjan's DFS classifies undirected edges into tree edges that discover new vertices and back-edges that jump to visited ancestors. Record tin[u] when vertex u is first entered, and maintain low[u] as the earliest discovery time reachable from u's subtree. Ignore the direct edge back to the immediate parent unless parallel edges exist."
+    ],
+    [
+      "Identify bridge edges",
+      ["tree edge (u, v)", "low[v] > tin[u]", "no back-edge bypass"],
+      "A tree edge from u to child v is a bridge if and only if low[v] is strictly greater than tin[u]. Strict inequality means no vertex in v's subtree has a back-edge reaching u or an ancestor of u. Deleting a bridge splits the connected component in two."
+    ],
+    [
+      "Spot articulation cut vertices",
+      ["non-root: low[v] >= tin[u]", "root: children >= 2", "critical hub"],
+      "A non-root vertex u is an articulation point if it has at least one child subtree v with low[v] greater than or equal to tin[u]. Because v can only reach u and not above u, removing u disconnects v's subtree. The DFS root is an articulation point exactly when it has two or more DFS tree children."
+    ],
+    [
+      "Condense into a bridge-block tree",
+      ["shrink 2-edge blocks", "bridges become tree edges", "tree LCA queries"],
+      "Contracting every bridge-connected component into a single super-node turns any connected graph into a tree of bridges. Paths in this condensed tree reveal which edges must be traversed by every route between two vertices. You can then apply standard tree DP or LCA queries on the condensed structure."
+    ]
+  ],
+  "EulerTourGuide": [
+    [
+      "Measure depth and subtree sizes",
+      ["root at 0", "depth[v] = depth[u]+1", "sz[u] = 1 + sum(sz[v])"],
+      "A tree on N vertices has N minus one edges and a unique simple path between any pair of nodes. Rooting the tree defines every node's depth and the exact set of descendants in its subtree. Compute depths on the way down and accumulate subtree sizes on the way back up."
+    ],
+    [
+      "Flatten subtrees with an Euler tour",
+      ["tin[u] on entry", "contiguous [tin..tout]", "1D array range"],
+      "An Euler tour assigns each vertex an entry timestamp tin[u] as a depth-first traversal visits it. Because DFS finishes an entire subtree before moving to a sibling, every subtree maps to a single contiguous slice from tin[u] to tout[u]. Subtree updates and queries now reduce to 1D Fenwick or Segment Tree range operations."
+    ],
+    [
+      "Find tree diameter in two sweeps",
+      ["start any node", "farthest node A", "farthest from A -> B"],
+      "The diameter of a tree is the longest simple path between any two vertices. Run a first BFS from an arbitrary node to locate a farthest endpoint A, which is guaranteed to be one end of a diameter. Run a second BFS from A to find the opposite endpoint B and the exact diameter length."
+    ],
+    [
+      "Locate the tree centroid",
+      ["max branch <= N/2", "walk into heavy child", "balanced divide"],
+      "A centroid is a vertex whose removal leaves no connected component with more than half the vertices. Starting at the root, step repeatedly into any child whose subtree size exceeds N divided by two until no such child exists. Centroids anchor balanced divide-and-conquer decompositions on trees."
+    ]
+  ],
+  "LcaGuide": [
+    [
+      "Precompute power-of-two ancestors",
+      ["up[k][u]", "2^k-th ancestor", "up[k-1][up[k-1][u]]"],
+      "Binary lifting precomputes the two-to-the-k-th ancestor of every tree node for k from zero up to log N. Jumping two to the k steps equals jumping two to the k minus one steps twice in succession. Filling the table takes O(N log N) time and space."
+    ],
+    [
+      "Jump to the k-th ancestor in log N",
+      ["decompose k in binary", "if k & (1 << b)", "u = up[b][u]"],
+      "Any jump distance k decomposes uniquely into a sum of powers of two via its set binary bits. Inspect each bit of k and advance u through the corresponding table entry whenever that bit is one. A query that would take N steps linearly finishes in at most twenty table lookups."
+    ],
+    [
+      "Align depths and lift together for LCA",
+      ["equalize depth(u, v)", "if u == v: return u", "lift while up[b][u] != up[b][v]"],
+      "To find the Lowest Common Ancestor of u and v, first lift the deeper node so both sit at the exact same depth. If they now coincide, that node is the LCA. Otherwise, iterate powers of two from largest to smallest and lift both pointers whenever their targets differ, stopping one step below the LCA."
+    ],
+    [
+      "Answer tree path distance queries",
+      ["w = lca(u, v)", "depth[u] + depth[v]", "- 2 * depth[w]"],
+      "Once the Lowest Common Ancestor w is known, the shortest path between u and v climbs from u up to w and descends from w to v. Their edge distance equals depth[u] plus depth[v] minus twice depth[w]. Weighted path totals work the same way by replacing depth with root-to-node prefix weights."
+    ]
+  ],
+  "GcdGuide": [
+    [
+      "Reduce remainders with Euclid's step",
+      ["gcd(a, b)", "gcd(b, a % b)", "O(log min(a, b))"],
+      "The greatest common divisor of a and b equals the greatest common divisor of b and a modulo b. Each modulo operation shrinks the smaller argument by at least half every two steps. Use Python's compiled math.gcd and math.lcm functions for maximum speed."
+    ],
+    [
+      "Solve Bezout's identity",
+      ["a*x + b*y = g", "back-substitute", "extended Euclid"],
+      "The Extended Euclidean Algorithm tracks coefficients x and y such that a times x plus b times y equals gcd(a, b). Use an iterative tuple swap in Python to avoid recursion depth issues on sixty-four-bit inputs. Linear Diophantine equations have integer solutions if and only if the right-hand side is divisible by g."
+    ],
+    [
+      "Compute general modular inverses",
+      ["a*x = 1 (mod m)", "gcd(a, m) == 1", "pow(a, -1, m)"],
+      "An integer a has a multiplicative inverse modulo m exactly when a and m are coprime. Extended Euclid finds this inverse even when the modulus m is composite. Built into Python 3.8 and later, pow(a, -1, m) runs Extended Euclid in fast C code."
+    ],
+    [
+      "Combine congruences with CRT",
+      ["x = r1 (mod m1)", "x = r2 (mod m2)", "unique mod lcm(m1,m2)"],
+      "The Chinese Remainder Theorem merges two modular equations into a single congruence modulo the least common multiple of their moduli. When the difference of remainders is divisible by gcd(m1, m2), Extended Euclid locates the merged remainder in one step. Fold a list of congruences pairwise to solve systems of any size."
+    ]
+  ],
+  "SieveGuide": [
+    [
+      "Cross out multiples from p squared",
+      ["is_prime bytearray", "start at p * p", "slice assignment"],
+      "The Sieve of Eratosthenes marks composite numbers up to N in O(N log log N) time. Start crossing out multiples of each prime p at p squared because any smaller composite multiple already has a prime factor below p. In Python, assign a zero bytearray slice in one step to run the inner loop at C speed."
+    ],
+    [
+      "Factor in log N with an SPF table",
+      ["spf[x] = smallest prime", "x //= spf[x]", "O(log x) factorization"],
+      "Precomputing the Smallest Prime Factor for every integer up to N unlocks ultra-fast repeated factorizations. To factor any number x, repeatedly divide x by spf[x] until x reaches one. Thousands of factorization queries finish in logarithmic time each instead of square-root trial division."
+    ],
+    [
+      "Test large numbers or factor in sqrt(N)",
+      ["d * d <= n", "strip prime d", "remainder > 1 is prime"],
+      "When a single number reaches ten to the twelfth, a full array sieve cannot fit in memory. Divide out factors d up to the square root of n; if the remaining value exceeds one after the loop, that cofactor is prime itself. For sixty-four-bit primality checks, deterministic Miller-Rabin bases test primality in microseconds."
+    ],
+    [
+      "Sieve a high shifted window",
+      ["primes <= sqrt(R)", "align first multiple >= L", "window [L..R]"],
+      "A segmented sieve finds all primes in a narrow interval from L to R even when R reaches ten to the twelfth. First sieve base primes up to the square root of R, then offset each base prime into the shifted window buffer. Only the window of size R minus L plus one is allocated."
+    ]
+  ],
+  "ModCombGuide": [
+    [
+      "Keep intermediate values reduced",
+      ["(a + b) % MOD", "(a * b) % MOD", "prime MOD = 10^9+7"],
+      "Counting problems ask for answers modulo a large prime such as one billion and seven to prevent huge number arithmetic. Apply the modulo operator after every addition, subtraction, and multiplication so integers stay within machine word size. Python's modulo always returns a non-negative remainder when the modulus is positive."
+    ],
+    [
+      "Exponentiate and invert with pow()",
+      ["pow(base, exp, MOD)", "Fermat: a^(p-2) % p", "O(log MOD) inverse"],
+      "Binary exponentiation raises a base to an exponent modulo MOD in O(log exp) multiplications. Always pass the third modulus argument to Python's built-in pow function instead of reducing after a massive power. Division modulo a prime p multiplies by the modular inverse pow(b, p - 2, p)."
+    ],
+    [
+      "Precompute factorials and inv_fact",
+      ["fact[i] = i * fact[i-1]", "inv_fact[N] = inv(fact[N])", "sweep down i -> i-1"],
+      "To answer many n-choose-r queries in constant time, precompute factorials up to N in a forward loop. Compute a single modular inverse for fact[N] at the top, then multiply downward by i to fill all inverse factorials in linear O(N) time. Every combination nCr then takes just two modular multiplications."
+    ],
+    [
+      "Apply Stars and Bars or Inclusion-Exclusion",
+      ["C(n + k - 1, k - 1)", "add odd intersections", "subtract even"],
+      "Stars and Bars counts ways to distribute n identical items into k distinct bins using C(n + k - 1, k - 1). When counting items that avoid several forbidden properties, use Inclusion-Exclusion over all subsets of violated rules. Alternating signs cancel out overcounted intersections cleanly."
+    ]
+  ],
+  "BitwiseGuide": [
+    [
+      "Manipulate bits in O(1)",
+      ["test: (x >> k) & 1", "set: x | (1 << k)", "flip: x ^ (1 << k)"],
+      "Bitwise operators act on all bit positions of an integer in parallel. Shift right by k and mask with one to read bit k, or shift one left by k to set, clear, or toggle that position. Use x.bit_count() and x.bit_length() in modern Python for fast population count and highest-bit lookups."
+    ],
+    [
+      "Exploit Kernighan's trick",
+      ["x & (x - 1) clears low bit", "x & -x isolates low bit", "power-of-two test"],
+      "Subtracting one flips the lowest set bit to zero and turns all trailing zeros into ones. Therefore x bitwise-and x minus one clears the lowest set bit in a single step, and equals zero for positive x if and only if x is a power of two. Meanwhile x bitwise-and negative x isolates that exact lowest set bit."
+    ],
+    [
+      "Cancel pairs with XOR",
+      ["x ^ x = 0", "x ^ 0 = x", "prefix XOR queries"],
+      "Exclusive-OR is associative, commutative, and its own inverse because every value cancels itself out. Prefix XOR arrays answer range XOR queries in O(1) time using the exact same formula as prefix sums. Note that addition equals XOR plus twice the bitwise-AND carry."
+    ],
+    [
+      "Build a Gaussian XOR basis",
+      ["reduce by basis[b]", "insert highest bit b", "max subset XOR"],
+      "A linear XOR basis compresses a huge array of integers into at most sixty basis vectors indexed by their highest set bit. To insert x, XOR it with existing basis vectors from top bit down until x becomes zero or claims an empty bit slot. Greedily XORing with the basis from highest bit down finds the maximum subset XOR."
+    ]
+  ],
+  "RollingHashGuide": [
+    [
+      "Map strings to polynomials mod M",
+      ["sum S[i] * B^i mod M", "prefix hashes H[i]", "powers P[i] = B^i"],
+      "Polynomial rolling hashing treats a string as a base-B number evaluated modulo a large prime M. Precomputing prefix hashes and base powers in linear time lets you fingerprint the entire string in one pass. Choose a base larger than the alphabet size and a modulus near ten to the ninth or two to the sixty-first."
+    ],
+    [
+      "Extract any substring hash in O(1)",
+      ["H[R] - H[L]*P[R-L]", "mod M", "O(1) slice equality"],
+      "Subtracting the scaled left prefix hash from the right prefix hash isolates the exact polynomial of substring L to R. Two arbitrary substrings of length one hundred thousand can now be compared for equality in constant time. Sliding window hashes and Rabin-Karp pattern searches follow directly."
+    ],
+    [
+      "Defeat anti-hash tests with double hash",
+      ["(H1 mod M1, H2 mod M2)", "randomized base B", "10^-18 collision rate"],
+      "By the birthday paradox, a single thirty-two-bit modulus will collide once you compare around forty thousand substrings. Pair two independent moduli or randomize the base at startup so prewritten hack tests cannot predict your hash values. Double hashing drops the collision probability to virtually zero."
+    ],
+    [
+      "Binary search the Longest Common Prefix",
+      ["binary search len", "compare hash(A) == hash(B)", "O(log N) LCP / sort"],
+      "Because two strings with a common prefix share identical hashes on every shorter prefix, LCP is monotonic in length. Binary searching the match length with O(1) hash checks finds the first differing character between two suffixes in O(log N) time. You can also binary search the longest palindromic substring by hashing both the string and its reverse."
+    ]
+  ],
+  "KmpGuide": [
+    [
+      "Define the prefix function pi[i]",
+      ["longest proper border", "prefix == suffix", "pi[0] = 0"],
+      "The KMP prefix function pi[i] stores the length of the longest proper prefix of S[0..i] that is also a suffix of S[0..i]. These matching prefix-suffix overlaps are called borders of the substring. Knowing every border lets a pattern matcher slide forward without ever backing up the text pointer."
+    ],
+    [
+      "Fall back along shorter borders",
+      ["j = pi[i - 1]", "while j > 0 and S[i] != S[j]", "j = pi[j - 1]"],
+      "To compute pi[i], try extending the previous border of length j equals pi[i minus one] by comparing S[i] with S[j]. On a mismatch, fall back to the next widest border pi[j minus one] until a match occurs or j reaches zero. Because j increases by at most one per step and only drops on fallbacks, the entire table builds in deterministic O(N) time."
+    ],
+    [
+      "Find all pattern matches in linear time",
+      ["P + '#' + T", "pi[idx] == len(P)", "deterministic O(N + M)"],
+      "Concatenate the pattern P, a sentinel character absent from both strings, and the text T, then compute the prefix function. Every position where pi equals the length of P marks the exact end of a full occurrence in the text. Unlike rolling hashes, KMP has zero collision risk and needs no big-integer arithmetic."
+    ],
+    [
+      "Extract minimal string periods",
+      ["k = N - pi[N - 1]", "N % k == 0", "repeating block S[0..k]"],
+      "The value N minus pi[N minus one] reveals the shortest possible period length k of a string of length N. If k divides N evenly, the entire string is formed by repeating its first k characters. Counting occurrences of each prefix also follows by accumulating counts from i down to pi[i minus one] in reverse order."
+    ]
+  ],
+  "ZAlgoGuide": [
+    [
+      "Measure prefix matches at every index",
+      ["z[i] = LCP(S, S[i..])", "suffix starting at i", "z[0] = 0"],
+      "The Z-array entry z[i] stores the length of the longest common prefix between the whole string S and the suffix starting at index i. While KMP looks backward at suffixes ending at i, the Z-algorithm looks forward from index i. This direct forward view makes prefix-matching constraints effortless to read."
+    ],
+    [
+      "Reuse the rightmost Z-box [L, R]",
+      ["maintain [L..R] match", "mirror i - L", "min(R - i + 1, z[i-L])"],
+      "Maintain the interval L to R of the match reaching furthest to the right seen so far. When index i falls inside this Z-box, the characters from i to R duplicate the prefix at offset i minus L, so initialize z[i] from z[i minus L] clipped to the box boundary. Only characters beyond R are ever compared directly."
+    ],
+    [
+      "Extend R monotonically in O(N)",
+      ["while S[z[i]] == S[i+z[i]]", "z[i] += 1", "update L, R"],
+      "Whenever a character comparison succeeds past the current right boundary R, advance R and update L to i. Because R starts at zero and never decreases, the inner while-loop executes at most N successful comparisons across the entire run. Total runtime is strictly linear O(N)."
+    ],
+    [
+      "Solve pattern search and cyclic shifts",
+      ["P + '#' + T", "S + S for shifts", "prefix-suffix borders"],
+      "Just like KMP, running Z on P plus sentinel plus T flags every occurrence where z equals the length of P. Running Z on S concatenated with itself compares every cyclic shift against the original string in one linear sweep. And any index i where i plus z[i] equals N is a valid border that is both prefix and suffix."
+    ]
+  ],
+  "TrieGuide": [
+    [
+      "Branch characters from a shared root",
+      ["root = 0", "edge per character", "shared prefixes"],
+      "A Trie, or prefix tree, stores a dictionary of strings by merging common prefixes along paths from a single root. Using parallel flat arrays of integer node indices instead of Python class objects keeps memory compact and lookups fast. Stepping through a word of length L takes at most L array accesses independent of dictionary size."
+    ],
+    [
+      "Track word endings and prefix counts",
+      ["pass_count[u] += 1", "end_count[u] += 1", "prefix queries O(L)"],
+      "Increment a pass counter on every node visited during insertion to know immediately how many dictionary words share that prefix. Mark an end counter at the final node to distinguish complete words from partial prefixes. Prefix autocomplete and frequency queries then finish in a single walk down the word."
+    ],
+    [
+      "Build a binary Trie of 0/1 bits",
+      ["MSB to LSB bits", "left = 0, right = 1", "fixed depth B = 30"],
+      "Treating thirty-bit or sixty-bit integers as fixed-length binary strings from most significant bit to least significant bit creates a Binary Trie. Each node has only two child slots for bit zero and bit one. You can insert numbers, delete numbers via pass counts, and query bitwise relationships in O(B) time."
+    ],
+    [
+      "Maximize XOR by taking opposite bits",
+      ["want bit 1 - b", "if exists: take it", "else fallback bit b"],
+      "To find which number in the set maximizes XOR with a query x, walk down the Binary Trie from the highest bit to the lowest bit. At each bit position, greedily step into the child holding the opposite bit of x whenever that branch exists. Securing a one in a higher bit position outweighs all lower bits combined."
+    ]
+  ],
+  "ConstructiveGuide": [
+    [
+      "Check necessary parity and bounds",
+      ["sum parity", "min <= target <= max", "print -1 early"],
+      "Constructive problems ask you to build any valid configuration or prove that none exists. Before searching for a pattern, test simple invariants like total sum parity, degree bounds, and minimum or maximum achievable values. Outputting negative one immediately on impossible bounds avoids complex edge-case bugs inside your builder."
+    ],
+    [
+      "Use zigzag and extreme interleaving",
+      ["1, N, 2, N-1...", "snake grid path", "distinct differences"],
+      "When asked for permutations with large or distinct adjacent differences, interleave the smallest and largest remaining numbers: one, N, two, N minus one. On grids, a boustrophedon snake path visits every cell in a single continuous chain that you can chop into pieces of any required sizes. Standard canonical shapes eliminate ad-hoc guesswork."
+    ],
+    [
+      "Decompose by greedy binary powers",
+      ["1, 2, 4, ..., 2^k", "remainder R", "span all sums 1..N"],
+      "Powers of two one, two, four, up to two to the k, together with the remaining difference R, can form every integer sum from one to N. Similarly, decomposing a graph into a star or a simple chain gives full control over diameter, leaf count, or degree sequence. Reduce N-variable freedom down to one tunable parameter."
+    ],
+    [
+      "Write a checker to verify invariants",
+      ["check(n, ans)", "fuzz small N", "assert constraints"],
+      "Because constructive problems often allow many valid outputs, sample tests rarely catch subtle boundary flaws. Write a five-line Python verifier that checks all problem rules on your generated output and fuzz it across all small inputs. Catching a broken invariant locally saves twenty penalty minutes."
+    ]
+  ],
+  "MoSqrtGuide": [
+    [
+      "Partition into sqrt(N) blocks",
+      ["B = int(sqrt(N))", "N/B blocks", "O(sqrt(N)) query"],
+      "Square-root decomposition splits an array of size N into blocks of size roughly square root of N. Range queries inspect at most N over B full blocks in O(1) each and at most 2B boundary elements individually. Choosing B near square root of N balances both terms at O(square root of N) per operation."
+    ],
+    [
+      "Sort offline queries in Mo's order",
+      ["group by L // B", "alternate R direction", "O((N + Q) sqrt(N))"],
+      "When range queries are offline and have no updates, Mo's algorithm reorders them by left-endpoint block and then by right endpoint. Alternating the R sort direction between even and odd blocks prevents the right pointer from jumping back across the array between blocks. Both pointers move at most O((N + Q) square root of N) steps in total."
+    ],
+    [
+      "Keep add and remove strictly O(1)",
+      ["expand before shrink", "flat list freq[]", "inline loop body"],
+      "Move the current range boundaries one step at a time, always expanding L and R outward before shrinking them inward so the interval never inverts. In Python, inline the add and remove updates using flat integer lists rather than dictionaries or helper function calls. Constant-time transitions are essential because they run millions of times."
+    ],
+    [
+      "Split heavy and light degrees",
+      ["light <= sqrt(M)", "heavy > sqrt(M)", "at most sqrt(M) heavy"],
+      "On graphs or frequency tables, classify items with count above square root of M as heavy and the rest as light. Light items can be iterated directly on update, while there are at most square root of M heavy items to check on query. Heavy-light thresholding bounds worst-case star graphs cleanly."
+    ]
+  ],
+  "NimGuide": [
+    [
+      "Classify Winning (N) and Losing (P) states",
+      ["terminal = P", "can reach P -> N", "all moves to N -> P"],
+      "In impartial normal-play games, the last player able to move wins and states have no hidden randomness. A position is winning if at least one legal move leads to a losing position for the opponent. A position is losing if every legal move hands a winning position to the opponent."
+    ],
+    [
+      "Balance piles with the Nim XOR-sum",
+      ["A_1 ^ A_2 ^ ... ^ A_n", "XOR != 0 -> First wins", "XOR == 0 -> Second wins"],
+      "Bouton's theorem proves that a multi-pile Nim position is losing if and only if the bitwise XOR sum of all pile sizes equals zero. From any nonzero XOR sum, you can reduce a pile sharing the highest set bit of the XOR total to force the new XOR sum to zero. From a zero XOR sum, every single legal move breaks the balance."
+    ],
+    [
+      "Compute Sprague-Grundy mex values",
+      ["G(u) = mex(next)", "smallest missing >= 0", "G(u) == 0 is losing"],
+      "The Sprague-Grundy theorem assigns every impartial game state an equivalent Nim pile size called its Grundy value or nimber. A state's Grundy value is the minimum excluded non-negative integer, or mex, among the Grundy values of its reachable next states. Any composite game of independent subgames has a total Grundy value equal to the XOR of its parts."
+    ],
+    [
+      "Exploit symmetry and period cycles",
+      ["mirror opponent move", "periodic G(n)", "parity invariant"],
+      "When Grundy values depend only on a pile size with bounded subtraction moves, compute the first few hundred values and look for an arithmetic period. Other games collapse immediately via a mirroring strategy where one player copies the opponent's move across a center of symmetry. Always print small Grundy tables to spot the pattern fast."
+    ]
+  ],
+  "CatalogGuide": [
+    [
+      "Navigate by problem archetype",
+      ["identify structure", "match chapter tool", "verify constraints"],
+      "The reference catalog maps recurring competitive programming patterns to their canonical algorithms and templates. Start by identifying whether the problem asks for an extremum, a count, a reachability check, or an explicit construction. Cross-check input limits immediately to narrow the candidate data structures."
+    ],
+    [
+      "Combine core building blocks",
+      ["sort + two pointers", "Euler tour + BIT", "BFS + binary search"],
+      "Harder division problems rarely test a single algorithm in isolation; instead they chain two standard primitives together. Flattening a tree with an Euler tour turns a subtree problem into a Fenwick tree range query. Binary searching the answer turns an optimization problem into a simple greedy or BFS check."
+    ],
+    [
+      "Stress-test against a brute force",
+      ["small generator", "fast vs slow solver", "minimal failing case"],
+      "When a submission fails on a hidden test, write a tiny random input generator and a ten-line brute-force solver. Run both on thousands of ten-element inputs until their outputs disagree. Tracing a five-element counterexample exposes the broken edge case in minutes."
+    ],
+    [
+      "Build a deliberate practice loop",
+      ["solve at rating +100", "review editorial", "re-implement clean"],
+      "Consistent rating growth comes from solving problems slightly above your comfort zone and upsolving every contest within twenty-four hours. When you read an editorial, close it before writing the code yourself from scratch. Log the key observation that unlocked each problem so you recognize it next time."
+    ]
+  ]
+}

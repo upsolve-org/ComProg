@@ -45,7 +45,7 @@ def max_subarray_sum(arr):
 
 TEST_CASES = [
     (
-        "8\n-2 1 -3 4 -1 2 1 -5 4",
+        "9\n-2 1 -3 4 -1 2 1 -5 4",
         "6"
     ),
     (

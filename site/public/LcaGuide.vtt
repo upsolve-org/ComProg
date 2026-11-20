@@ -1,0 +1,37 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:07.514
+Binary lifting precomputes the two-to-the-k-th ancestor of every tree node for k from zero up to log N.
+
+00:00:07.514 --> 00:00:14.152
+Jumping two to the k steps equals jumping two to the k minus one steps twice in succession.
+
+00:00:14.152 --> 00:00:17.800
+Filling the table takes O(N log N) time and space.
+
+00:00:18.100 --> 00:00:24.934
+Any jump distance k decomposes uniquely into a sum of powers of two via its set binary bits.
+
+00:00:24.934 --> 00:00:32.289
+Inspect each bit of k and advance u through the corresponding table entry whenever that bit is one.
+
+00:00:32.289 --> 00:00:38.380
+A query that would take N steps linearly finishes in at most twenty table lookups.
+
+00:00:38.700 --> 00:00:46.537
+To find the Lowest Common Ancestor of u and v, first lift the deeper node so both sit at the exact same depth.
+
+00:00:46.537 --> 00:00:49.601
+If they now coincide, that node is the LCA.
+
+00:00:49.601 --> 00:00:59.860
+Otherwise, iterate powers of two from largest to smallest and lift both pointers whenever their targets differ, stopping one step below the LCA.
+
+00:01:00.167 --> 00:01:10.346
+Once the Lowest Common Ancestor w is known, the shortest path between u and v climbs from u up to w and descends from w to v.
+
+00:01:10.346 --> 00:01:16.127
+Their edge distance equals depth[u] plus depth[v] minus twice depth[w].
+
+00:01:16.127 --> 00:01:23.538
+Weighted path totals work the same way by replacing depth with root-to-node prefix weights.

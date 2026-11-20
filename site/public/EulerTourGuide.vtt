@@ -1,0 +1,37 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:06.555
+A tree on N vertices has N minus one edges and a unique simple path between any pair of nodes.
+
+00:00:06.555 --> 00:00:12.971
+Rooting the tree defines every node's depth and the exact set of descendants in its subtree.
+
+00:00:12.971 --> 00:00:18.480
+Compute depths on the way down and accumulate subtree sizes on the way back up.
+
+00:00:18.800 --> 00:00:27.164
+An Euler tour assigns each vertex an entry timestamp tin[u] as a depth-first traversal visits it.
+
+00:00:27.164 --> 00:00:39.064
+Because DFS finishes an entire subtree before moving to a sibling, every subtree maps to a single contiguous slice from tin[u] to tout[u].
+
+00:00:39.064 --> 00:00:46.480
+Subtree updates and queries now reduce to 1D Fenwick or Segment Tree range operations.
+
+00:00:46.800 --> 00:00:52.629
+The diameter of a tree is the longest simple path between any two vertices.
+
+00:00:52.629 --> 00:01:01.956
+Run a first BFS from an arbitrary node to locate a farthest endpoint A, which is guaranteed to be one end of a diameter.
+
+00:01:01.956 --> 00:01:08.640
+Run a second BFS from A to find the opposite endpoint B and the exact diameter length.
+
+00:01:08.967 --> 00:01:15.878
+A centroid is a vertex whose removal leaves no connected component with more than half the vertices.
+
+00:01:15.878 --> 00:01:24.449
+Starting at the root, step repeatedly into any child whose subtree size exceeds N divided by two until no such child exists.
+
+00:01:24.449 --> 00:01:29.218
+Centroids anchor balanced divide-and-conquer decompositions on trees.
