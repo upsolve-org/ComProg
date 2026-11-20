@@ -1,0 +1,37 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:07.358
+Ternary search optimizes functions that strictly decrease to a single minimum and then strictly increase.
+
+00:00:07.358 --> 00:00:13.175
+Convex cost functions and Euclidean distance sums often follow this unimodal shape.
+
+00:00:13.175 --> 00:00:17.800
+Confirm there are no flat plateaus before applying ternary search.
+
+00:00:18.133 --> 00:00:23.222
+Place two interior probes at one-third and two-thirds of the current interval.
+
+00:00:23.222 --> 00:00:29.094
+Evaluating the objective at both points reveals which outer third cannot hold the optimum.
+
+00:00:29.094 --> 00:00:32.813
+Discard the worse side and keep the remaining two-thirds.
+
+00:00:33.133 --> 00:00:38.027
+Each comparison shrinks the interval length to two-thirds of its previous size.
+
+00:00:38.027 --> 00:00:42.859
+Eighty iterations reduce a massive coordinate range down to machine precision.
+
+00:00:42.859 --> 00:00:47.133
+The check function only needs to evaluate the cost at a single point.
+
+00:00:47.467 --> 00:00:53.832
+On discrete integer coordinates, integer division can cause the probes to collide when the range is small.
+
+00:00:53.832 --> 00:00:57.975
+Stop the ternary loop once the interval holds three or four integers.
+
+00:00:57.975 --> 00:01:01.638
+Finish by evaluating those few remaining candidates directly.

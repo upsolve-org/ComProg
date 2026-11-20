@@ -1,0 +1,34 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:05.769
+Represent sparse contest graphs with a list of neighbor lists indexed by vertex number.
+
+00:00:05.769 --> 00:00:11.273
+Adjacency matrices waste quadratic memory when vertices reach one hundred thousand.
+
+00:00:11.273 --> 00:00:17.440
+Always add both endpoints for undirected edges and only the forward arrow for directed edges.
+
+00:00:17.767 --> 00:00:24.652
+Breadth-first search uses a deque to visit vertices in increasing order of edge distance from the source.
+
+00:00:24.652 --> 00:00:32.520
+Mark a vertex visited at the moment you push it into the queue, not when you pop it, to prevent duplicate queue entries.
+
+00:00:32.520 --> 00:00:36.127
+BFS computes exact shortest paths in unweighted graphs.
+
+00:00:36.433 --> 00:00:45.091
+Depth-first search plunges along a path to discover connected components, cycles, and bipartite two-colorings.
+
+00:00:45.091 --> 00:00:53.276
+In Python, use an explicit list as a stack instead of deep recursion so skewed chain graphs never crash.
+
+00:00:53.276 --> 00:00:58.313
+Alternate colors zero and one across edges to detect odd cycles.
+
+00:00:58.633 --> 00:01:07.034
+When distances are measured from the nearest of many starting points, seed all sources into the queue at distance zero before starting BFS.
+
+00:01:07.034 --> 00:01:16.884
+If edge weights are only zero or one, push zero-weight transitions to the front of the deque and one-weight transitions to the back for linear-time shortest paths.

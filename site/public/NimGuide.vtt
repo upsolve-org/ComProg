@@ -1,0 +1,37 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:06.906
+In impartial normal-play games, the last player able to move wins and states have no hidden randomness.
+
+00:00:06.906 --> 00:00:13.142
+A position is winning if at least one legal move leads to a losing position for the opponent.
+
+00:00:13.142 --> 00:00:18.640
+A position is losing if every legal move hands a winning position to the opponent.
+
+00:00:18.967 --> 00:00:29.562
+Bouton's theorem proves that a multi-pile Nim position is losing if and only if the bitwise XOR sum of all pile sizes equals zero.
+
+00:00:29.562 --> 00:00:39.831
+From any nonzero XOR sum, you can reduce a pile sharing the highest set bit of the XOR total to force the new XOR sum to zero.
+
+00:00:39.831 --> 00:00:45.047
+From a zero XOR sum, every single legal move breaks the balance.
+
+00:00:45.367 --> 00:00:54.314
+The Sprague-Grundy theorem assigns every impartial game state an equivalent Nim pile size called its Grundy value or nimber.
+
+00:00:54.314 --> 00:01:03.695
+A state's Grundy value is the minimum excluded non-negative integer, or mex, among the Grundy values of its reachable next states.
+
+00:01:03.695 --> 00:01:10.767
+Any composite game of independent subgames has a total Grundy value equal to the XOR of its parts.
+
+00:01:11.100 --> 00:01:20.690
+When Grundy values depend only on a pile size with bounded subtraction moves, compute the first few hundred values and look for an arithmetic period.
+
+00:01:20.690 --> 00:01:29.058
+Other games collapse immediately via a mirroring strategy where one player copies the opponent's move across a center of symmetry.
+
+00:01:29.058 --> 00:01:32.791
+Always print small Grundy tables to spot the pattern fast.

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A hands-on competitive programming course in Python.">
+  <title>ComProg • Python course</title>
+  <link rel="icon" href="/upsolve.png">
+  <link rel="stylesheet" href="/app.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to lesson</a>
+  <header class="masthead">
+    <a class="brand" href="/"><img src="/upsolve.png" width="38" height="38" alt="UPsolve"><span>ComProg</span></a>
+    <span class="course-name">Competitive programming in Python</span>
+    <div class="progress"><progress id="progress" max="12" value="0" aria-label="Course progress"></progress><span id="progress-label"></span></div>
+  </header>
+  <div class="shell">
+    <details class="sidebar" open>
+      <summary>Course outline</summary>
+      <nav id="outline" aria-label="Course outline"></nav>
+    </details>
+    <main id="main" tabindex="-1">
+      <div class="lesson-bar">
+        <div><p id="position" class="position"></p><h1 id="title">Loading course…</h1></div>
+        <nav id="tabs" class="tabs" aria-label="Lesson sections"></nav>
+      </div>
+      <div id="layout" class="layout">
+        <div class="lesson-pane">
+          <section id="reading" class="reading"></section>
+          <section id="tutor" class="tutor" aria-labelledby="tutor-title" hidden>
+            <div><h2 id="tutor-title">Ask the tutor</h2><p>Get a question that helps you take the next step.</p></div>
+            <div id="conversation" role="log" aria-label="Tutor conversation"></div>
+            <form id="ask"><label class="sr-only" for="question">Your question</label><input id="question" required maxlength="1600" placeholder="Where are you stuck?"><button class="primary">Ask for a hint</button></form>
+          </section>
+          <nav id="pagination" class="pagination" aria-label="Lesson navigation"></nav>
+        </div>
+        <section id="workspace" class="workspace" aria-label="Python workspace" hidden>
+          <div class="workspace-head"><span class="filename">main.py</span><button type="button" id="reset">Reset code</button></div>
+          <div id="editor"></div>
+          <div class="console">
+            <div class="tools"><button type="button" id="run">Run</button><button type="button" id="check" class="primary">Submit</button></div>
+            <label for="stdin">Custom input</label>
+            <textarea id="stdin" rows="3" spellcheck="false" maxlength="30000"></textarea>
+            <h2 class="output-title">Output</h2>
+            <pre id="output" tabindex="0" aria-live="polite">Run your code to see its output.</pre>
+          </div>
+        </section>
+      </div>
+
+    </main>
+  </div>
+  <iframe id="runner" title="Python runtime" sandbox="allow-scripts" src="/runner.html" hidden></iframe>
+</body>
+</html>

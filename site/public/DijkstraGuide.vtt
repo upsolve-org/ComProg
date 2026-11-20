@@ -1,0 +1,37 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:06.507
+Dijkstra's algorithm finds single-source shortest paths when every edge weight is zero or positive.
+
+00:00:06.507 --> 00:00:11.436
+Initialize the source distance to zero and all other distances to infinity.
+
+00:00:11.436 --> 00:00:18.600
+Because weights are non-negative, the closest unfinalized vertex on the frontier can never be improved later.
+
+00:00:18.900 --> 00:00:24.016
+Use Python's heapq module to store candidate pairs of distance and vertex.
+
+00:00:24.016 --> 00:00:30.722
+Because heapq has no decrease-key operation, push a fresh tuple whenever a shorter path is found.
+
+00:00:30.722 --> 00:00:37.220
+Immediately discard stale heap entries whose popped distance exceeds the current best dist[u].
+
+00:00:37.533 --> 00:00:45.328
+For each outgoing edge from u to v with weight w, compare d plus w against dist[v].
+
+00:00:45.328 --> 00:00:53.123
+Only update dist[v] and push to the heap when the new distance is strictly smaller.
+
+00:00:53.123 --> 00:01:01.293
+This strict check prevents duplicate heap pushes and keeps runtime at O((V + E) log V).
+
+00:01:01.600 --> 00:01:08.018
+Many contest problems allow K discounted edges, parity switches, or fuel states along the route.
+
+00:01:08.018 --> 00:01:15.104
+Encode the extra parameter directly into the vertex state and run standard Dijkstra on the expanded graph.
+
+00:01:15.104 --> 00:01:19.851
+Store a parent array whenever you need to reconstruct the winning path.

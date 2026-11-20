@@ -1,0 +1,37 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:06.558
+Polynomial rolling hashing treats a string as a base-B number evaluated modulo a large prime M.
+
+00:00:06.558 --> 00:00:14.083
+Precomputing prefix hashes and base powers in linear time lets you fingerprint the entire string in one pass.
+
+00:00:14.083 --> 00:00:21.400
+Choose a base larger than the alphabet size and a modulus near ten to the ninth or two to the sixty-first.
+
+00:00:21.700 --> 00:00:29.798
+Subtracting the scaled left prefix hash from the right prefix hash isolates the exact polynomial of substring L to R.
+
+00:00:29.798 --> 00:00:37.135
+Two arbitrary substrings of length one hundred thousand can now be compared for equality in constant time.
+
+00:00:37.135 --> 00:00:41.980
+Sliding window hashes and Rabin-Karp pattern searches follow directly.
+
+00:00:42.300 --> 00:00:50.078
+By the birthday paradox, a single thirty-two-bit modulus will collide once you compare around forty thousand substrings.
+
+00:00:50.078 --> 00:00:57.727
+Pair two independent moduli or randomize the base at startup so prewritten hack tests cannot predict your hash values.
+
+00:00:57.727 --> 00:01:01.940
+Double hashing drops the collision probability to virtually zero.
+
+00:01:02.267 --> 00:01:09.562
+Because two strings with a common prefix share identical hashes on every shorter prefix, LCP is monotonic in length.
+
+00:01:09.562 --> 00:01:17.737
+Binary searching the match length with O(1) hash checks finds the first differing character between two suffixes in O(log N) time.
+
+00:01:17.737 --> 00:01:24.278
+You can also binary search the longest palindromic substring by hashing both the string and its reverse.

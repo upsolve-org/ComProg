@@ -1,0 +1,37 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:06.828
+Zero-one knapsack asks which subset of items maximizes value without exceeding a capacity limit.
+
+00:00:06.828 --> 00:00:12.518
+A naive recursion branches into two choices per item and explodes exponentially.
+
+00:00:12.518 --> 00:00:20.200
+Dynamic programming records the best result for each reachable weight so overlapping states are solved once.
+
+00:00:20.500 --> 00:00:26.385
+In a one-dimensional DP array, iterate capacity from maximum down to the item's weight.
+
+00:00:26.385 --> 00:00:35.112
+Sweeping backward ensures each transition reads values from the previous item's layer rather than reusing the current item twice.
+
+00:00:35.112 --> 00:00:38.900
+Memory drops to a single flat list of length W plus one.
+
+00:00:39.200 --> 00:00:47.223
+When each item or coin can be chosen an unlimited number of times, reverse the inner loop to run forward from weight to W.
+
+00:00:47.223 --> 00:00:53.076
+Forward iteration intentionally builds upon states that already include the current item.
+
+00:00:53.076 --> 00:00:57.680
+Always check whether item reuse is allowed before ordering your loops.
+
+00:00:58.000 --> 00:01:06.152
+For boolean subset sum queries in Python, represent all reachable sums as set bits inside a single big integer.
+
+00:01:06.152 --> 00:01:14.525
+Processing a weight w becomes a single bitwise shift and OR operation: bits equals bits OR bits shifted left by w.
+
+00:01:14.525 --> 00:01:18.491
+Python shifts arbitrary-precision integers at C speed.

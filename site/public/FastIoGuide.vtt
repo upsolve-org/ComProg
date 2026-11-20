@@ -1,0 +1,37 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:05.405
+Calling input inside a million-line loop adds per-line overhead in Python.
+
+00:00:05.405 --> 00:00:10.736
+Reading from sys.stdin buffers the stream and keeps I/O time predictable.
+
+00:00:10.736 --> 00:00:14.680
+Use a token iterator when numbers span multiple lines.
+
+00:00:15.000 --> 00:00:19.703
+Printing inside a tight multi-test loop flushes the output stream repeatedly.
+
+00:00:19.703 --> 00:00:24.283
+Collect formatted answers in a list and join them with newlines at the end.
+
+00:00:24.283 --> 00:00:27.520
+Single-pass output avoids hidden time limit failures.
+
+00:00:27.833 --> 00:00:33.835
+Before writing code, translate the maximum input size into an operation budget.
+
+00:00:33.835 --> 00:00:40.671
+Two hundred thousand elements require linear or log-linear time to pass within one second.
+
+00:00:40.671 --> 00:00:45.153
+Reject quadratic ideas immediately when the bound is large.
+
+00:00:45.467 --> 00:00:52.116
+Isolate each test case inside a dedicated solve function so local variables stay fast and clean.
+
+00:00:52.116 --> 00:00:56.341
+Reset per-case state explicitly before reading the next test.
+
+00:00:56.341 --> 00:01:00.358
+Test single-element and boundary inputs before submitting.

@@ -1,0 +1,37 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:06.083
+An unrooted tree becomes a hierarchy as soon as you pick an arbitrary node as the root.
+
+00:00:06.083 --> 00:00:10.767
+Information then flows cleanly from leaves upward to their parents.
+
+00:00:10.767 --> 00:00:16.360
+Establish parent-child edges first so transitions never revisit the parent node.
+
+00:00:16.667 --> 00:00:23.725
+Deep trees with two hundred thousand nodes can trigger Python's recursion limit and high function-call overhead.
+
+00:00:23.725 --> 00:00:30.089
+Build a breadth-first or stack traversal list first, then iterate through that list in reverse order.
+
+00:00:30.089 --> 00:00:34.627
+Reverse traversal guarantees every child is processed before its parent.
+
+00:00:34.933 --> 00:00:41.505
+At each node u, accumulate child DP values into states such as taking u versus skipping u.
+
+00:00:41.505 --> 00:00:49.390
+For tree diameter or maximum independent set, each child contributes in constant time to its parent's state.
+
+00:00:49.390 --> 00:00:53.333
+The whole bottom-up pass finishes in linear O(N) time.
+
+00:00:53.667 --> 00:01:00.685
+When a problem asks for the answer assuming every node takes a turn as the root, run a second top-down pass.
+
+00:01:00.685 --> 00:01:07.833
+Pass the parent's outside contribution down to each child using prefix and suffix products of sibling results.
+
+00:01:07.833 --> 00:01:11.278
+All N root answers are computed in total linear time.
