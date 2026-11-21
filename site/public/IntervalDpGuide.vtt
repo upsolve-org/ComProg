@@ -18,20 +18,20 @@ Combine the optimal solutions for the left sub-interval and right sub-interval p
 00:00:35.982 --> 00:00:42.420
 Three nested loops yield a cubic O(N cubed) runtime suited for N up to four hundred.
 
-00:00:42.733 --> 00:00:50.148
+00:00:42.700 --> 00:00:50.115
 In palindrome and bracket deletion problems, check whether the outer characters at L and R can pair together.
 
-00:00:50.148 --> 00:00:56.746
+00:00:50.115 --> 00:00:56.713
 Matching endpoints let you transition directly from the inner interval L plus one to R minus one.
 
-00:00:56.746 --> 00:01:01.984
+00:00:56.713 --> 00:01:01.951
 Take the best result across both endpoint pairing and mid-interval splitting.
 
-00:01:02.300 --> 00:01:10.813
+00:01:02.233 --> 00:01:10.746
 When items sit on a circular ring rather than a straight line, concatenate the array with itself to form a sequence of length 2N.
 
-00:01:10.813 --> 00:01:15.894
+00:01:10.746 --> 00:01:15.827
 Run standard interval DP on segments up to length N across the doubled array.
 
-00:01:15.894 --> 00:01:20.711
+00:01:15.827 --> 00:01:20.644
 The optimal answer over all length-N windows solves the circular problem.

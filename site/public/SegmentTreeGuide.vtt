@@ -9,29 +9,29 @@ An iterative segment tree places leaves at indices N through 2N minus one and in
 00:00:16.361 --> 00:00:20.320
 This flat layout avoids recursion overhead in Python.
 
-00:00:20.633 --> 00:00:27.272
+00:00:20.600 --> 00:00:27.239
 To update a single element, write the new value at its leaf position and walk upward to the root.
 
-00:00:27.272 --> 00:00:32.269
+00:00:27.239 --> 00:00:32.236
 At each parent, recompute the aggregate from its left and right children.
 
-00:00:32.269 --> 00:00:36.033
+00:00:32.236 --> 00:00:36.000
 Only the O(log N) ancestors along the path are touched.
 
-00:00:36.333 --> 00:00:42.627
+00:00:36.267 --> 00:00:42.561
 To query an arbitrary range, start at the leaf boundaries and climb toward the root from both sides.
 
-00:00:42.627 --> 00:00:50.558
+00:00:42.561 --> 00:00:50.491
 Whenever a left boundary is a right child or a right boundary is a left child, fold that node into the answer and step inward.
 
-00:00:50.558 --> 00:00:53.453
+00:00:50.491 --> 00:00:53.387
 At most two nodes are combined per tree level.
 
-00:00:53.767 --> 00:01:02.300
+00:00:53.667 --> 00:01:02.200
 Segment trees work with any associative operation, including minimum, maximum, greatest common divisor, or matrix products.
 
-00:01:02.300 --> 00:01:08.127
+00:01:02.200 --> 00:01:08.027
 Define the identity element carefully so empty sub-queries never corrupt the result.
 
-00:01:08.127 --> 00:01:12.498
+00:01:08.027 --> 00:01:12.398
 Use lazy propagation when whole ranges must be updated at once.

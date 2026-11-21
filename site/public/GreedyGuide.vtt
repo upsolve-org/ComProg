@@ -27,11 +27,11 @@ Compare a hypothetical optimal schedule against your greedy choice and show that
 00:00:47.240 --> 00:00:51.620
 Test small random inputs against brute force to catch flaws early.
 
-00:00:51.917 --> 00:00:58.199
+00:00:51.900 --> 00:00:58.182
 Some greedy problems require dynamic re-ordering or regret adjustments as new items arrive.
 
-00:00:58.199 --> 00:01:05.655
+00:00:58.182 --> 00:01:05.638
 Maintain chosen items in a min-heap or max-heap so you can replace the worst commitment in logarithmic time.
 
-00:01:05.655 --> 00:01:09.728
+00:01:05.638 --> 00:01:09.711
 Regret greedy combines local speed with global flexibility.

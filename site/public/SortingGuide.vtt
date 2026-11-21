@@ -9,29 +9,29 @@ Python's built-in Timsort runs in O(N log N) and exploits existing order in the 
 00:00:13.327 --> 00:00:17.520
 Most sweep-line and greedy algorithms begin with a sort.
 
-00:00:17.817 --> 00:00:22.804
+00:00:17.800 --> 00:00:22.787
 Pass a key function that maps each item to a lightweight comparison tuple.
 
-00:00:22.804 --> 00:00:28.196
+00:00:22.787 --> 00:00:28.179
 Negate numeric fields when you need descending order on a secondary tie-breaker.
 
-00:00:28.196 --> 00:00:32.577
+00:00:28.179 --> 00:00:32.560
 Avoid slow comparator functions when a direct tuple key suffices.
 
-00:00:32.867 --> 00:00:38.374
+00:00:32.833 --> 00:00:38.341
 Convert intervals into start and end events, then sort all events by coordinate.
 
-00:00:38.374 --> 00:00:42.436
+00:00:38.341 --> 00:00:42.402
 Maintain an active counter as you sweep from left to right.
 
-00:00:42.436 --> 00:00:48.907
+00:00:42.402 --> 00:00:48.873
 Order tie-breaking deltas carefully depending on whether endpoints are inclusive or exclusive.
 
-00:00:49.200 --> 00:00:57.133
+00:00:49.167 --> 00:00:57.100
 When values reach a billion but the count of items is small, replace each number with its rank in sorted unique order.
 
-00:00:57.133 --> 00:01:02.108
+00:00:57.100 --> 00:01:02.075
 Coordinate compression maps sparse values into a compact zero-based array.
 
-00:01:02.108 --> 00:01:06.411
+00:01:02.075 --> 00:01:06.378
 Data structures like Fenwick trees can then index them directly.

@@ -18,20 +18,20 @@ Collect formatted answers in a list and join them with newlines at the end.
 00:00:24.250 --> 00:00:27.487
 Single-pass output avoids hidden time limit failures.
 
-00:00:27.783 --> 00:00:33.785
+00:00:27.767 --> 00:00:33.768
 Before writing code, translate the maximum input size into an operation budget.
 
-00:00:33.785 --> 00:00:40.621
+00:00:33.768 --> 00:00:40.605
 Two hundred thousand elements require linear or log-linear time to pass within one second.
 
-00:00:40.621 --> 00:00:45.103
+00:00:40.605 --> 00:00:45.087
 Reject quadratic ideas immediately when the bound is large.
 
-00:00:45.400 --> 00:00:52.049
+00:00:45.367 --> 00:00:52.016
 Isolate each test case inside a dedicated solve function so local variables stay fast and clean.
 
-00:00:52.049 --> 00:00:56.274
+00:00:52.016 --> 00:00:56.241
 Reset per-case state explicitly before reading the next test.
 
-00:00:56.274 --> 00:01:00.291
+00:00:56.241 --> 00:01:00.258
 Test single-element and boundary inputs before submitting.

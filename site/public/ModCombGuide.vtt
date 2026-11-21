@@ -9,29 +9,29 @@ Apply the modulo operator after every addition, subtraction, and multiplication 
 00:00:16.441 --> 00:00:22.240
 Python's modulo always returns a non-negative remainder when the modulus is positive.
 
-00:00:22.567 --> 00:00:29.758
+00:00:22.533 --> 00:00:29.725
 Binary exponentiation raises a base to an exponent modulo MOD in O(log exp) multiplications.
 
-00:00:29.758 --> 00:00:38.748
+00:00:29.725 --> 00:00:38.714
 Always pass the third modulus argument to Python's built-in pow function instead of reducing after a massive power.
 
-00:00:38.748 --> 00:00:44.767
+00:00:38.714 --> 00:00:44.733
 Division modulo a prime p multiplies by the modular inverse pow(b, p - 2, p).
 
-00:00:45.067 --> 00:00:52.855
+00:00:45.000 --> 00:00:52.788
 To answer many n-choose-r queries in constant time, precompute factorials up to N in a forward loop.
 
-00:00:52.855 --> 00:01:03.447
+00:00:52.788 --> 00:01:03.380
 Compute a single modular inverse for fact[N] at the top, then multiply downward by i to fill all inverse factorials in linear O(N) time.
 
-00:01:03.447 --> 00:01:08.587
+00:01:03.380 --> 00:01:08.520
 Every combination nCr then takes just two modular multiplications.
 
-00:01:08.900 --> 00:01:16.797
+00:01:08.800 --> 00:01:16.697
 Stars and Bars counts ways to distribute n identical items into k distinct bins using C(n + k - 1, k - 1).
 
-00:01:16.797 --> 00:01:25.737
+00:01:16.697 --> 00:01:25.637
 When counting items that avoid several forbidden properties, use Inclusion-Exclusion over all subsets of violated rules.
 
-00:01:25.737 --> 00:01:30.431
+00:01:25.637 --> 00:01:30.331
 Alternating signs cancel out overcounted intersections cleanly.

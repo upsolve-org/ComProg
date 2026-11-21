@@ -9,29 +9,29 @@ Before searching for a pattern, test simple invariants like total sum parity, de
 00:00:15.299 --> 00:00:22.640
 Outputting negative one immediately on impossible bounds avoids complex edge-case bugs inside your builder.
 
-00:00:22.967 --> 00:00:33.704
+00:00:22.933 --> 00:00:33.670
 When asked for permutations with large or distinct adjacent differences, interleave the smallest and largest remaining numbers: one, N, two, N minus one.
 
-00:00:33.704 --> 00:00:43.247
+00:00:33.670 --> 00:00:43.214
 On grids, a boustrophedon snake path visits every cell in a single continuous chain that you can chop into pieces of any required sizes.
 
-00:00:43.247 --> 00:00:46.967
+00:00:43.214 --> 00:00:46.933
 Standard canonical shapes eliminate ad-hoc guesswork.
 
-00:00:47.267 --> 00:00:58.920
+00:00:47.200 --> 00:00:58.853
 Powers of two one, two, four, up to two to the k, together with the remaining difference R, can form every integer sum from one to N.
 
-00:00:58.920 --> 00:01:09.960
+00:00:58.853 --> 00:01:09.893
 Similarly, decomposing a graph into a star or a simple chain gives full control over diameter, leaf count, or degree sequence.
 
-00:01:09.960 --> 00:01:14.867
+00:01:09.893 --> 00:01:14.800
 Reduce N-variable freedom down to one tunable parameter.
 
-00:01:15.200 --> 00:01:22.039
+00:01:15.100 --> 00:01:21.939
 Because constructive problems often allow many valid outputs, sample tests rarely catch subtle boundary flaws.
 
-00:01:22.039 --> 00:01:29.810
+00:01:21.939 --> 00:01:29.710
 Write a five-line Python verifier that checks all problem rules on your generated output and fuzz it across all small inputs.
 
-00:01:29.810 --> 00:01:33.851
+00:01:29.710 --> 00:01:33.751
 Catching a broken invariant locally saves twenty penalty minutes.

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<g>
+<g id="glyph-0-0">
+<path d="M 2.890625 0 L 2.261719 0 L 1.527344 -1.039062 L 0.800781 0 L 0.191406 0 L 1.246094 -1.367188 L 0.238281 -2.722656 L 0.84375 -2.722656 L 1.558594 -1.675781 L 2.261719 -2.722656 L 2.847656 -2.722656 L 1.824219 -1.355469 Z "/>
+</g>
+<g id="glyph-0-1">
+</g>
+</g>
+</defs>
+<g fill="rgb(27.45098%, 78.823529%, 29.803922%)" fill-opacity="1">
+<use xlink:href="#glyph-0-0" x="30" y="24.125977"/>
+<use xlink:href="#glyph-0-1" x="33.054688" y="24.125977"/>
+<use xlink:href="#glyph-0-1" x="36.109375" y="24.125977"/>
+<use xlink:href="#glyph-0-1" x="39.164062" y="24.125977"/>
+<use xlink:href="#glyph-0-1" x="42.21875" y="24.125977"/>
+</g>
+</svg>

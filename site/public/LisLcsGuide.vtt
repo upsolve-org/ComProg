@@ -9,29 +9,29 @@ Instead, maintain an array tails where tails[k] holds the smallest possible endi
 00:00:16.407 --> 00:00:20.800
 Because tails stays sorted, we can update it with binary search.
 
-00:00:21.133 --> 00:00:28.573
+00:00:21.100 --> 00:00:28.539
 For each element x, use bisect_left on tails to find the first ending value greater than or equal to x.
 
-00:00:28.573 --> 00:00:36.518
+00:00:28.539 --> 00:00:36.484
 Replace that entry to keep future extensions as easy as possible, or append x if it extends the longest chain.
 
-00:00:36.518 --> 00:00:41.573
+00:00:36.484 --> 00:00:41.540
 Use bisect_right instead when non-decreasing subsequences are allowed.
 
-00:00:41.900 --> 00:00:48.202
+00:00:41.833 --> 00:00:48.135
 Longest Common Subsequence compares prefixes of two strings A and B on a two-dimensional grid.
 
-00:00:48.202 --> 00:00:56.581
+00:00:48.135 --> 00:00:56.515
 When the current characters match, extend the diagonal state by one; otherwise take the maximum of skipping either character.
 
-00:00:56.581 --> 00:01:01.140
+00:00:56.515 --> 00:01:01.073
 Keep only two rows in memory when only the final length is required.
 
-00:01:01.467 --> 00:01:08.383
+00:01:01.367 --> 00:01:08.283
 Edit distance generalizes LCS by assigning explicit costs to insertion, deletion, and substitution.
 
-00:01:08.383 --> 00:01:15.928
+00:01:08.283 --> 00:01:15.828
 Transition from the top, left, and diagonal neighbors by taking the minimum cost among all three operations.
 
-00:01:15.928 --> 00:01:21.238
+00:01:15.828 --> 00:01:21.138
 This same alignment table powers diff tools and approximate string matching.

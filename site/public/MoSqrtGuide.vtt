@@ -9,29 +9,29 @@ Range queries inspect at most N over B full blocks in O(1) each and at most 2B b
 00:00:14.859 --> 00:00:21.320
 Choosing B near square root of N balances both terms at O(square root of N) per operation.
 
-00:00:21.633 --> 00:00:31.248
+00:00:21.600 --> 00:00:31.214
 When range queries are offline and have no updates, Mo's algorithm reorders them by left-endpoint block and then by right endpoint.
 
-00:00:31.248 --> 00:00:41.376
+00:00:31.214 --> 00:00:41.343
 Alternating the R sort direction between even and odd blocks prevents the right pointer from jumping back across the array between blocks.
 
-00:00:41.376 --> 00:00:46.513
+00:00:41.343 --> 00:00:46.480
 Both pointers move at most O((N + Q) square root of N) steps in total.
 
-00:00:46.833 --> 00:00:56.287
+00:00:46.767 --> 00:00:56.220
 Move the current range boundaries one step at a time, always expanding L and R outward before shrinking them inward so the interval never inverts.
 
-00:00:56.287 --> 00:01:04.057
+00:00:56.220 --> 00:01:03.990
 In Python, inline the add and remove updates using flat integer lists rather than dictionaries or helper function calls.
 
-00:01:04.057 --> 00:01:08.913
+00:01:03.990 --> 00:01:08.847
 Constant-time transitions are essential because they run millions of times.
 
-00:01:09.233 --> 00:01:16.996
+00:01:09.133 --> 00:01:16.896
 On graphs or frequency tables, classify items with count above square root of M as heavy and the rest as light.
 
-00:01:16.996 --> 00:01:25.318
+00:01:16.896 --> 00:01:25.218
 Light items can be iterated directly on update, while there are at most square root of M heavy items to check on query.
 
-00:01:25.318 --> 00:01:29.724
+00:01:25.218 --> 00:01:29.624
 Heavy-light thresholding bounds worst-case star graphs cleanly.

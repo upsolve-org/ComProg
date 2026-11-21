@@ -9,29 +9,29 @@ Prerequisite tasks, course schedules, and dynamic programming transitions all re
 00:00:16.290 --> 00:00:21.480
 If the graph contains a directed cycle, no valid linear ordering exists.
 
-00:00:21.800 --> 00:00:28.383
+00:00:21.767 --> 00:00:28.350
 Kahn's algorithm tracks the indegree of every vertex and pushes all zero-indegree starters into a queue.
 
-00:00:28.383 --> 00:00:36.866
+00:00:28.350 --> 00:00:36.832
 Pop a vertex, append it to the ordering, and decrement the indegrees of its outgoing neighbors, enqueuing any neighbor that hits zero.
 
-00:00:36.866 --> 00:00:41.360
+00:00:36.832 --> 00:00:41.327
 If fewer than V nodes are emitted, a cycle blocked the remaining nodes.
 
-00:00:41.667 --> 00:00:51.266
+00:00:41.600 --> 00:00:51.200
 When a problem asks for the lexicographically smallest valid topological order, replace Kahn's FIFO deque with a min-heap.
 
-00:00:51.266 --> 00:00:56.460
+00:00:51.200 --> 00:00:56.393
 Always pop the smallest available zero-indegree vertex label next.
 
-00:00:56.460 --> 00:01:03.227
+00:00:56.393 --> 00:01:03.160
 Heap operations add only a logarithmic factor while enforcing the exact priority rule.
 
-00:01:03.533 --> 00:01:10.353
+00:01:03.433 --> 00:01:10.253
 Once you have the topological array, any path-counting or longest-path query becomes a single forward loop.
 
-00:01:10.353 --> 00:01:16.344
+00:01:10.253 --> 00:01:16.244
 Iterate vertices in topological order and push each node's DP value across its outgoing edges.
 
-00:01:16.344 --> 00:01:22.144
+00:01:16.244 --> 00:01:22.044
 Acyclicity guarantees every incoming transition is finalized before a vertex pushes onward.

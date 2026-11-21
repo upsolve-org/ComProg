@@ -15,20 +15,20 @@ Use a Disjoint Set Union to test whether an edge's endpoints already belong to t
 00:00:38.849 --> 00:00:42.700
 Stop as soon as V minus one edges have been accepted.
 
-00:00:43.000 --> 00:00:52.161
+00:00:42.967 --> 00:00:52.128
 Prim's algorithm grows a single tree from a starting vertex by repeatedly annexing the cheapest edge reaching an unvisited vertex.
 
-00:00:52.161 --> 00:01:00.124
+00:00:52.128 --> 00:01:00.091
 It mirrors Dijkstra's heap loop except the priority is the single edge weight rather than distance from the root.
 
-00:01:00.124 --> 00:01:06.960
+00:01:00.091 --> 00:01:06.927
 On dense complete graphs, an array-based O(V squared) Prim loop avoids sorting millions of edges.
 
-00:01:07.267 --> 00:01:14.673
+00:01:07.200 --> 00:01:14.606
 Every path inside a Minimum Spanning Tree automatically minimizes the maximum edge weight along the route.
 
-00:01:14.673 --> 00:01:22.638
+00:01:14.606 --> 00:01:22.572
 If you stop Kruskal's algorithm after V minus K merges, you obtain the minimum-cost spanning forest of K clusters.
 
-00:01:22.638 --> 00:01:28.438
+00:01:22.572 --> 00:01:28.371
 Always verify that V minus one edges were chosen to confirm the graph is connected.

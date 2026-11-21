@@ -27,11 +27,11 @@ Use a while-loop to advance the left boundary whenever the invariant breaks.
 00:00:45.484 --> 00:00:49.060
 Record the optimal length when the window is valid.
 
-00:00:49.350 --> 00:00:57.819
+00:00:49.333 --> 00:00:57.802
 When every subsegment inside a valid window is also valid, fixing the right endpoint counts all matching left endpoints at once.
 
-00:00:57.819 --> 00:01:03.111
+00:00:57.802 --> 00:01:03.095
 A valid window from L to R contributes R minus L plus one subarrays ending at R.
 
-00:01:03.111 --> 00:01:05.361
+00:01:03.095 --> 00:01:05.344
 Sum these counts across the sweep.

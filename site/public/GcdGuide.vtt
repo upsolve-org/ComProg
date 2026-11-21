@@ -9,29 +9,29 @@ Each modulo operation shrinks the smaller argument by at least half every two st
 00:00:14.297 --> 00:00:20.080
 Use Python's compiled math.gcd and math.lcm functions for maximum speed.
 
-00:00:20.400 --> 00:00:29.498
+00:00:20.367 --> 00:00:29.464
 The Extended Euclidean Algorithm tracks coefficients x and y such that a times x plus b times y equals gcd(a, b).
 
-00:00:29.498 --> 00:00:37.146
+00:00:29.464 --> 00:00:37.113
 Use an iterative tuple swap in Python to avoid recursion depth issues on sixty-four-bit inputs.
 
-00:00:37.146 --> 00:00:45.600
+00:00:37.113 --> 00:00:45.567
 Linear Diophantine equations have integer solutions if and only if the right-hand side is divisible by g.
 
-00:00:45.900 --> 00:00:53.660
+00:00:45.833 --> 00:00:53.594
 An integer a has a multiplicative inverse modulo m exactly when a and m are coprime.
 
-00:00:53.660 --> 00:01:00.312
+00:00:53.594 --> 00:01:00.245
 Extended Euclid finds this inverse even when the modulus m is composite.
 
-00:01:00.312 --> 00:01:07.980
+00:01:00.245 --> 00:01:07.913
 Built into Python 3.8 and later, pow(a, -1, m) runs Extended Euclid in fast C code.
 
-00:01:08.300 --> 00:01:16.753
+00:01:08.200 --> 00:01:16.653
 The Chinese Remainder Theorem merges two modular equations into a single congruence modulo the least common multiple of their moduli.
 
-00:01:16.753 --> 00:01:24.380
+00:01:16.653 --> 00:01:24.280
 When the difference of remainders is divisible by gcd(m1, m2), Extended Euclid locates the merged remainder in one step.
 
-00:01:24.380 --> 00:01:28.511
+00:01:24.280 --> 00:01:28.411
 Fold a list of congruences pairwise to solve systems of any size.

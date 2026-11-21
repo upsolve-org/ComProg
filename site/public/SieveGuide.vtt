@@ -9,29 +9,29 @@ Start crossing out multiples of each prime p at p squared because any smaller co
 00:00:16.185 --> 00:00:22.720
 In Python, assign a zero bytearray slice in one step to run the inner loop at C speed.
 
-00:00:23.033 --> 00:00:31.282
+00:00:23.000 --> 00:00:31.249
 Precomputing the Smallest Prime Factor for every integer up to N unlocks ultra-fast repeated factorizations.
 
-00:00:31.282 --> 00:00:36.934
+00:00:31.249 --> 00:00:36.900
 To factor any number x, repeatedly divide x by spf[x] until x reaches one.
 
-00:00:36.934 --> 00:00:44.953
+00:00:36.900 --> 00:00:44.920
 Thousands of factorization queries finish in logarithmic time each instead of square-root trial division.
 
-00:00:45.267 --> 00:00:51.330
+00:00:45.200 --> 00:00:51.263
 When a single number reaches ten to the twelfth, a full array sieve cannot fit in memory.
 
-00:00:51.330 --> 00:01:00.186
+00:00:51.263 --> 00:01:00.119
 Divide out factors d up to the square root of n; if the remaining value exceeds one after the loop, that cofactor is prime itself.
 
-00:01:00.186 --> 00:01:07.067
+00:01:00.119 --> 00:01:07.000
 For sixty-four-bit primality checks, deterministic Miller-Rabin bases test primality in microseconds.
 
-00:01:07.400 --> 00:01:15.168
+00:01:07.300 --> 00:01:15.068
 A segmented sieve finds all primes in a narrow interval from L to R even when R reaches ten to the twelfth.
 
-00:01:15.168 --> 00:01:23.226
+00:01:15.068 --> 00:01:23.126
 First sieve base primes up to the square root of R, then offset each base prime into the shifted window buffer.
 
-00:01:23.226 --> 00:01:27.291
+00:01:23.126 --> 00:01:27.191
 Only the window of size R minus L plus one is allocated.

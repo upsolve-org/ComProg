@@ -18,20 +18,20 @@ If their sum is too small, advance the left pointer; if too large, retreat the r
 00:00:27.331 --> 00:00:31.367
 Each comparison eliminates an entire row or column of pairs.
 
-00:00:31.667 --> 00:00:37.690
+00:00:31.633 --> 00:00:37.657
 For subarray constraints, advance the right pointer step by step to include new elements.
 
-00:00:37.690 --> 00:00:44.526
+00:00:37.657 --> 00:00:44.493
 Whenever the current segment violates the condition, advance the left pointer until validity returns.
 
-00:00:44.526 --> 00:00:49.467
+00:00:44.493 --> 00:00:49.433
 Every right endpoint immediately records its furthest valid left partner.
 
-00:00:49.767 --> 00:00:54.970
+00:00:49.733 --> 00:00:54.937
 Two pointers also synchronize two sorted sequences in a single linear sweep.
 
-00:00:54.970 --> 00:01:00.584
+00:00:54.937 --> 00:01:00.551
 Always advance the pointer holding the smaller element to merge or intersect sets.
 
-00:01:00.584 --> 00:01:04.898
+00:01:00.551 --> 00:01:04.864
 Skip equal neighbors on the fly when unique pairs are required.
