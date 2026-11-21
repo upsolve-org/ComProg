@@ -47,3 +47,4 @@ venv.bak/
 
 # Website
 node_modules/
+media/
