@@ -46,6 +46,37 @@ for u, v, weight in edges:
 
 ---
 
+## 🔦 Worked Example: Drain a Priority Queue
+Dijkstra settles the smallest tentative distance, then relaxes the edges leaving it; a node whose pair is stale is skipped. With `s = 0` on the graph drawn in the overview, the settles come out in the order `0, 1, 2, 3, 4, 5` with distances `0, 1, 2, 4, 6, 8`:
+
+```python
+import heapq
+
+graph = [[(1, 1), (2, 5)], [(2, 2), (3, 3)], [(4, 1)], [(4, 2), (5, 6)], [(5, 2)], []]
+
+
+def dijkstra(graph, s):
+    dist = [float("inf")] * len(graph)
+    dist[s] = 0
+    heap = [(0, s)]
+    while heap:
+        d, u = heapq.heappop(heap)
+        if d > dist[u]:
+            continue                         # stale pair: u was settled cheaper
+        for v, w in graph[u]:
+            if d + w < dist[v]:
+                dist[v] = d + w
+                heapq.heappush(heap, (dist[v], v))
+    return dist
+
+
+print(dijkstra(graph, 0))                    # [0, 1, 2, 4, 6, 8]
+```
+
+The trap is edge `0–2`: the heap first sees `2` at cost 5. The better route `0 → 1 → 2` costs 3, and `2` only gets its real distance when the queue reaches `1`. Stale `(5, 2)` pairs left in the heap are dropped by the `d > dist[u]` check instead of re-settling a node.
+
+---
+
 ## 📂 Included Source Files & Templates
 - 🚶 [[07_Graph_Algorithms/graph_traversal_bfs_dfs.py|graph_traversal_bfs_dfs.py]] — BFS shortest path & bipartite 2-coloring
 - ⏳ [[07_Graph_Algorithms/topological_sort.py|topological_sort.py]] — Kahn's BFS algorithm for DAG topological sort

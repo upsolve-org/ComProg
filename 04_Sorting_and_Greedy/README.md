@@ -59,6 +59,32 @@ To prove a greedy order $A$ is optimal:
 3. Show that swapping (exchanging) them either improves the objective or leaves it unchanged without violating constraints.
 4. Conclude that by repeated swaps, the greedy solution achieves optimal value.
 
+### Worked Example: Earliest Finish First
+Sorting by start time gives `B` and `C` equal footing (both start at 2–3) and only one can be picked. Sorting by finish time puts `B` first, and after it ends at 3 the rest of the day stays free:
+
+```python
+events = [("A", 1, 6), ("B", 2, 3), ("C", 3, 5), ("D", 5, 6), ("E", 7, 9)]
+
+
+def most_events(events):
+    picked, last_end = [], 0
+    for name, start, end in sorted(events, key=lambda e: e[2]):
+        if start >= last_end:            # compatible with everything picked
+            picked.append(name)
+            last_end = end
+    return picked
+
+
+def count_from(first, events):
+    rest = [e for e in events if e[0] != first[0]]
+    return 1 + len(most_events([e for e in rest if e[1] >= first[2]]))
+
+
+print(most_events(events), "· A first:", count_from(events[0], events))
+```
+
+The greedy answer is `['B', 'C', 'D', 'E']`, four events. Forcing `A` first (it finishes at 6) leaves only `E`, so it collects two: whichever optimal solution starts elsewhere, the earliest finisher is never worse.
+
 ---
 
 ## 📂 Included Source Files & Templates

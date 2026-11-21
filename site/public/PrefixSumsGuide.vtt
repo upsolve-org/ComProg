@@ -18,20 +18,20 @@ Thousands of range sum queries finish in constant time each.
 00:00:25.917 --> 00:00:29.140
 Never rescan the slice when the array is static.
 
-00:00:29.467 --> 00:00:32.899
+00:00:29.433 --> 00:00:32.866
 A difference array is the inverse of a prefix sum.
 
-00:00:32.899 --> 00:00:39.764
+00:00:32.866 --> 00:00:39.730
 Adding a value to a range only touches the left endpoint and the index just past the right endpoint.
 
-00:00:39.764 --> 00:00:44.638
+00:00:39.730 --> 00:00:44.604
 After all updates finish, one prefix pass reconstructs the final array.
 
-00:00:44.967 --> 00:00:50.372
+00:00:44.900 --> 00:00:50.305
 Two-dimensional prefix sums accumulate rectangle totals using inclusion-exclusion.
 
-00:00:50.372 --> 00:00:56.832
+00:00:50.305 --> 00:00:56.765
 Add the top and left rectangles, subtract the double-counted corner, and include the current cell.
 
-00:00:56.832 --> 00:01:00.458
+00:00:56.765 --> 00:01:00.391
 Subgrid queries then run in four arithmetic operations.

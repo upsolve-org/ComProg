@@ -15,9 +15,9 @@ test('lesson videos derive chapter timestamps from narration scripts and WebVTT 
     pythonChapters.map(({ title, stamp, start }) => ({ title, stamp, start })),
     [
       { title: 'Choose a runtime', stamp: '0:00', start: 0 },
-      { title: 'Read the input', stamp: '0:12', start: 12.9 },
-      { title: 'Count the work', stamp: '0:25', start: 25.4 },
-      { title: 'Choose an operation', stamp: '0:38', start: 38 }
+      { title: 'Read the input', stamp: '0:12', start: 12.85 },
+      { title: 'Count the work', stamp: '0:25', start: 25.3 },
+      { title: 'Choose an operation', stamp: '0:37', start: 37.833 }
     ]
   )
 
@@ -26,9 +26,9 @@ test('lesson videos derive chapter timestamps from narration scripts and WebVTT 
     contestChapters.map(({ title, stamp, start }) => ({ title, stamp, start })),
     [
       { title: 'Choose a round', stamp: '0:00', start: 0 },
-      { title: 'Read the standings', stamp: '0:12', start: 12.767 },
-      { title: 'Trace a submission', stamp: '0:25', start: 25.567 },
-      { title: 'Upsolve after the round', stamp: '0:38', start: 38.233 }
+      { title: 'Read the standings', stamp: '0:12', start: 12.7 },
+      { title: 'Trace a submission', stamp: '0:25', start: 25.433 },
+      { title: 'Upsolve after the round', stamp: '0:38', start: 38.05 }
     ]
   )
 
@@ -79,10 +79,12 @@ test('activeChapterIndex tracks the current chapter across playback timestamps',
   const pythonVtt = await readFile(new URL('site/public/PythonGuide.vtt', root), 'utf8')
   const chapters = buildFilmChapters(scripts.PythonGuide, pythonVtt, 'PythonGuide')
 
+  // Every assertion reads the boundary from the built chapters, so re-timed captions cannot break it.
+  const starts = chapters.map(chapter => chapter.start)
   assert.equal(activeChapterIndex(chapters, 0), 0)
-  assert.equal(activeChapterIndex(chapters, 12.5), 0)
-  assert.equal(activeChapterIndex(chapters, 12.9), 1)
-  assert.equal(activeChapterIndex(chapters, 25.4), 2)
-  assert.equal(activeChapterIndex(chapters, 38), 3)
+  assert.equal(activeChapterIndex(chapters, starts[1] - 0.1), 0)
+  assert.equal(activeChapterIndex(chapters, starts[1]), 1)
+  assert.equal(activeChapterIndex(chapters, starts[2]), 2)
+  assert.equal(activeChapterIndex(chapters, starts[3]), 3)
   assert.equal(activeChapterIndex(chapters, 48.5), 3)
 })

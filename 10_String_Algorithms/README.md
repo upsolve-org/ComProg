@@ -29,6 +29,26 @@ String processing in competitive programming involves pattern matching, prefix s
 - Computable in $O(N)$ time.
 - Finds all occurrences of pattern $P$ in text $T$ in $O(|T| + |P|)$.
 
+The prefix function on its own, right after a long run. `ababaca` loses its tail to three different letters over three steps, and every step falls back to an earlier border instead of jumping to `i - 1`:
+
+```python
+def prefix_function(s):
+    pi = [0] * len(s)
+    for i in range(1, len(s)):
+        j = pi[i - 1]
+        while j > 0 and s[i] != s[j]:
+            j = pi[j - 1]                 # the only place a restart could hide
+        if s[i] == s[j]:
+            j += 1
+        pi[i] = j
+    return pi
+
+
+print(prefix_function("ababaca"))         # [0, 0, 1, 2, 3, 0, 1]
+```
+
+At `i = 5` the character is `c`, not `b`, so `j` drops `3 → 1 → 0` in one frame; `i = 6` matches `s[0]` and gets `1`, not `5`. Each `j` only ever falls by the borders it gained, so the total work is $O(n)$.
+
 ### 3. Z-Algorithm
 - Computes the $Z$-array where $Z[i]$ is the length of the longest common prefix (LCP) between $S$ and the suffix of $S$ starting at index $i$.
 - Computable in $O(N)$ time.

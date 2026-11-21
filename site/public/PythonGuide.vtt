@@ -9,29 +9,29 @@ PyPy can speed up a long loop after its compiler warms up.
 00:00:07.521 --> 00:00:12.560
 Compare both on representative inputs when the contest supports them.
 
-00:00:12.900 --> 00:00:17.451
+00:00:12.850 --> 00:00:17.401
 Splitting a buffer turns whitespace-separated input into tokens.
 
-00:00:17.451 --> 00:00:22.002
+00:00:17.401 --> 00:00:21.952
 Bulk reading is convenient, but holds the whole input in memory.
 
-00:00:22.002 --> 00:00:25.060
+00:00:21.952 --> 00:00:25.010
 Read a line at a time if the file is large.
 
-00:00:25.400 --> 00:00:30.404
+00:00:25.300 --> 00:00:30.304
 A thousand items scanned a thousand times means a million visits.
 
-00:00:30.404 --> 00:00:34.638
+00:00:30.304 --> 00:00:34.538
 Changing interpreters cannot remove that repeated work.
 
-00:00:34.638 --> 00:00:37.640
+00:00:34.538 --> 00:00:37.540
 First look for a way to reuse a result.
 
-00:00:38.000 --> 00:00:41.472
+00:00:37.833 --> 00:00:41.305
 Removing the first item of a list shifts the rest.
 
-00:00:41.472 --> 00:00:45.360
+00:00:41.305 --> 00:00:45.193
 A deque supports removal at either end in constant time.
 
-00:00:45.360 --> 00:00:49.040
+00:00:45.193 --> 00:00:48.873
 Choose the structure around the operation you repeat.

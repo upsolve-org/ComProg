@@ -9,29 +9,29 @@ Instead of searching only inside an explicit array, search over the space of pos
 00:00:14.286 --> 00:00:19.000
 Verify that if a capacity works, every larger capacity also works.
 
-00:00:19.300 --> 00:00:24.718
+00:00:20.000 --> 00:00:25.418
 Keep one pointer strictly on the invalid side and the other on the valid side.
 
-00:00:24.718 --> 00:00:29.094
+00:00:25.418 --> 00:00:29.794
 Halve the interval until the pointers sit on adjacent integers.
 
-00:00:29.094 --> 00:00:33.540
+00:00:29.794 --> 00:00:34.240
 Clear invariants eliminate off-by-one errors and infinite loops.
 
-00:00:33.867 --> 00:00:38.940
+00:00:34.800 --> 00:00:39.873
 Python's bisect module locates insertion points in compiled C speed.
 
-00:00:38.940 --> 00:00:47.221
+00:00:39.873 --> 00:00:48.154
 Use bisect_left for the first index at least the target, and bisect_right for the first index strictly greater.
 
-00:00:47.221 --> 00:00:52.667
+00:00:48.154 --> 00:00:53.600
 Subtracting the two indices counts exact occurrences in logarithmic time.
 
-00:00:53.000 --> 00:01:00.108
+00:00:54.133 --> 00:01:01.241
 When binary searching floating-point coordinates, a while-loop on epsilon can stall due to precision limits.
 
-00:01:00.108 --> 00:01:03.728
+00:01:01.241 --> 00:01:04.861
 Run a fixed loop of sixty to eighty iterations instead.
 
-00:01:03.728 --> 00:01:07.611
+00:01:04.861 --> 00:01:08.744
 Each step halves the interval and guarantees high accuracy.

@@ -32,6 +32,26 @@ The Two Pointers method is an optimization technique that reduces quadratic $O(N
   - Shrink `left` until the condition is restored.
   - Used for "Longest subarray with sum $\le S$", "Subarrays with at most $K$ distinct elements".
 
+### Worked Example: Shrink Until the Budget Holds
+Budget `5`, array `[2, 1, 3, 2, 4, 1, 3]` (positive values only, so shrinking always lowers the sum). Enter the budget first, then the array:
+
+```python
+def longest_at_most(a, budget):
+    left = total = best = 0
+    for right, x in enumerate(a):
+        total += x                       # expand
+        while total > budget:            # shrink until it fits
+            total -= a[left]
+            left += 1
+        best = max(best, right - left + 1)
+    return best
+
+
+print(longest_at_most([2, 1, 3, 2, 4, 1, 3], 5))   # 2, e.g. [2, 1, 3] after dropping the 2
+```
+
+`left` and `right` only move forward, so the loop body runs at most $2N$ times: $O(N)$. Negative values break the "shrink fixes it" assumption and need a prefix sum plus a different structure.
+
 ---
 
 ## 💡 Python Optimization Note

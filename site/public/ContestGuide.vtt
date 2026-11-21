@@ -9,26 +9,26 @@ Division four often offers an accessible starting point.
 00:00:07.976 --> 00:00:12.400
 Virtual participation lets you practice a past round against the clock.
 
-00:00:12.767 --> 00:00:17.332
+00:00:12.700 --> 00:00:17.266
 In a points-based round, the time of acceptance can affect the score.
 
-00:00:17.332 --> 00:00:23.155
+00:00:17.266 --> 00:00:23.089
 In an ICPC-style round, teams are ranked first by problems solved, then by penalty time.
 
-00:00:23.155 --> 00:00:25.207
+00:00:23.089 --> 00:00:25.140
 Check the rules for your event.
 
-00:00:25.567 --> 00:00:29.555
+00:00:25.433 --> 00:00:29.421
 Passing pretests is provisional in rounds that use them.
 
-00:00:29.555 --> 00:00:34.397
+00:00:29.421 --> 00:00:34.264
 A later system test can expose a missed boundary or a slow approach.
 
-00:00:34.397 --> 00:00:37.887
+00:00:34.264 --> 00:00:37.753
 Try the smallest input and a case near the limit.
 
-00:00:38.233 --> 00:00:41.970
+00:00:38.050 --> 00:00:41.787
 After the round, find the first assumption that failed.
 
-00:00:41.970 --> 00:00:48.153
+00:00:41.787 --> 00:00:47.970
 Make a small counterexample, explain the fix, and solve the problem again before moving on.

@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A hands-on competitive programming course in Python.">
-  <title>ComProg • Python course</title>
+  <meta name="description" content="A hands-on competitive programming course in Python and C++20.">
+  <title>ComProg • Competitive programming course</title>
   <link rel="icon" href="/upsolve.png">
   <link rel="stylesheet" href="/app.css">
   <script type="module" src="/app.js"></script>
@@ -13,6 +13,10 @@
   <a class="skip" href="#main">Skip to lesson</a>
   <header class="masthead">
     <a class="brand" href="/"><img src="/upsolve.png" width="38" height="38" alt="UPsolve"><span>ComProg</span></a>
+    <nav class="course-switch" aria-label="Course language">
+      <button type="button" data-course="python" aria-pressed="true"><span class="course-dot" aria-hidden="true">Py</span>Python</button>
+      <button type="button" data-course="cpp" aria-pressed="false"><span class="course-dot" aria-hidden="true">C++</span>C++20</button>
+    </nav>
     <span class="course-name">Competitive programming in Python</span>
     <div class="progress"><progress id="progress" max="12" value="0" aria-label="Course progress"></progress><span id="progress-label"></span></div>
   </header>
@@ -36,8 +40,8 @@
           </section>
           <nav id="pagination" class="pagination" aria-label="Lesson navigation"></nav>
         </div>
-        <section id="workspace" class="workspace" aria-label="Python workspace" hidden>
-          <div class="workspace-head"><span class="filename">main.py</span><button type="button" id="reset">Reset code</button></div>
+        <section id="workspace" class="workspace" aria-label="Code workspace" hidden>
+          <div class="workspace-head"><span class="filename" id="filename">main.py</span><button type="button" id="reset">Reset code</button></div>
           <div id="editor"></div>
           <div class="console">
             <div class="tools"><button type="button" id="run">Run</button><button type="button" id="check" class="primary">Submit</button></div>

@@ -9,29 +9,29 @@ Add the incoming element on the right and remove the outgoing element on the lef
 00:00:11.636 --> 00:00:15.880
 Incremental updates avoid recomputing the window from scratch.
 
-00:00:16.200 --> 00:00:22.043
+00:00:16.167 --> 00:00:22.010
 When the window size is fixed at K, initialize the state with the first K elements.
 
-00:00:22.043 --> 00:00:28.520
+00:00:22.010 --> 00:00:28.487
 Slide one position right by adding the new element and subtracting the element K steps back.
 
-00:00:28.520 --> 00:00:32.040
+00:00:28.487 --> 00:00:32.007
 Track the best aggregate after every single shift.
 
-00:00:32.367 --> 00:00:40.221
+00:00:32.300 --> 00:00:40.154
 For longest or shortest valid subarray problems, expand the right boundary and update your frequency map or sum.
 
-00:00:40.221 --> 00:00:45.550
+00:00:40.154 --> 00:00:45.484
 Use a while-loop to advance the left boundary whenever the invariant breaks.
 
-00:00:45.550 --> 00:00:49.127
+00:00:45.484 --> 00:00:49.060
 Record the optimal length when the window is valid.
 
-00:00:49.433 --> 00:00:57.902
+00:00:49.350 --> 00:00:57.819
 When every subsegment inside a valid window is also valid, fixing the right endpoint counts all matching left endpoints at once.
 
-00:00:57.902 --> 00:01:03.195
+00:00:57.819 --> 00:01:03.111
 A valid window from L to R contributes R minus L plus one subarrays ending at R.
 
-00:01:03.195 --> 00:01:05.444
+00:01:03.111 --> 00:01:05.361
 Sum these counts across the sweep.

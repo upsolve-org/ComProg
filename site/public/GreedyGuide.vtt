@@ -9,29 +9,29 @@ Unlike dynamic programming, it explores only a single path of decisions.
 00:00:11.948 --> 00:00:17.480
 Because choices are permanent, the ordering criterion must be proven sound.
 
-00:00:17.800 --> 00:00:24.888
+00:00:17.767 --> 00:00:24.855
 In classic interval scheduling, sorting tasks by earliest finish time leaves the maximum room for future intervals.
 
-00:00:24.888 --> 00:00:28.771
+00:00:24.855 --> 00:00:28.738
 Always pick the next compatible interval that finishes soonest.
 
-00:00:28.771 --> 00:00:33.640
+00:00:28.738 --> 00:00:33.607
 Sorting by earliest start or shortest duration fails on simple counterexamples.
 
-00:00:33.967 --> 00:00:39.276
+00:00:33.900 --> 00:00:39.209
 Justify a greedy rule with an exchange argument before trusting it in a contest.
 
-00:00:39.276 --> 00:00:47.306
+00:00:39.209 --> 00:00:47.240
 Compare a hypothetical optimal schedule against your greedy choice and show that swapping them never hurts the objective.
 
-00:00:47.306 --> 00:00:51.687
+00:00:47.240 --> 00:00:51.620
 Test small random inputs against brute force to catch flaws early.
 
-00:00:52.000 --> 00:00:58.282
+00:00:51.917 --> 00:00:58.199
 Some greedy problems require dynamic re-ordering or regret adjustments as new items arrive.
 
-00:00:58.282 --> 00:01:05.738
+00:00:58.199 --> 00:01:05.655
 Maintain chosen items in a min-heap or max-heap so you can replace the worst commitment in logarithmic time.
 
-00:01:05.738 --> 00:01:09.811
+00:01:05.655 --> 00:01:09.728
 Regret greedy combines local speed with global flexibility.

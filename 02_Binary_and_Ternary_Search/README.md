@@ -44,6 +44,30 @@ while lo <= hi:
         lo = mid + 1
 ```
 
+### Worked Example
+The test array is `[1, 10, 10, 10, 20, 30]` and the predicate is `a[i] >= 10`. Wrapping it in one function makes the loop reusable for "first $\ge x$", "first $\ge$ a computed bound", and so on:
+
+```python
+a = [1, 10, 10, 10, 20, 30]
+
+
+def first_at_least(a, target):
+    lo, hi, ans = 0, len(a) - 1, -1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if a[mid] >= target:
+            ans = mid        # remember it, then look further left
+            hi = mid - 1
+        else:
+            lo = mid + 1
+    return ans
+
+
+print(first_at_least(a, 10), "·", a[first_at_least(a, 10)], "·", first_at_least(a, 15))
+```
+
+The trace probes `mid = 2` (holds, `ans = 2`), `mid = 0` (fails), `mid = 1` (holds, `ans = 1`), then stops with `lo = 2 > hi = 0`. Three probes settle a six-element array; the duplicate `10`s are why the boundary is `1` and not `2`.
+
 ---
 
 ## ⚡ 2. Built-in Python: `bisect`

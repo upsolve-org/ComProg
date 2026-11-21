@@ -78,6 +78,40 @@ When debugging code that gets **Wrong Answer (WA)** or **Time Limit Exceeded (TL
 
 ---
 
+## 🧪 A Worked Example of the Whole Loop
+
+Take "find the maximum subarray sum" on `[3, -1, 4, -3]`. The loop below is the habit to build, and every step is cheap:
+
+```python
+def brute(a):
+    best = a[0]
+    for i in range(len(a)):
+        for j in range(i, len(a)):
+            best = max(best, sum(a[i:j + 1]))  # O(n^2) checks
+    return best
+
+
+def solve(a):
+    best = here = a[0]                      # Kadane: O(n), one pass
+    for x in a[1:]:
+        here = max(x, here + x)             # restart, or extend
+        best = max(best, here)
+    return best
+
+
+print(brute([3, -1, 4, -3]) == solve([3, -1, 4, -3]))
+```
+
+1. **Read the constraints.** $N \le 2 \times 10^5$ rules out the $O(N^2)$ version before you write it.
+2. **Get a brute force that is obviously right.** Small inputs, no cleverness.
+3. **Look for the structure.** `here` forgets the past whenever it goes negative.
+4. **Stress test.** Random arrays of length 0–8, compare both functions a few thousand times.
+5. **Upsolve.** Missed it in contest? Write the $O(N)$ version from memory afterwards.
+
+The same five steps apply to every module in this course; only step 3 changes.
+
+---
+
 > [!note] In-Depth Companion Guides
 > - 🐍 [[00_General_Advice_and_Practice/python_cp_guide.md|Python in Competitive Programming Guide]]
 > - ⚔️ [[00_General_Advice_and_Practice/codeforces_platform_guide.md|Codeforces Platform, Divisions & Hacking Guide]]

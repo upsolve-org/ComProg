@@ -9,29 +9,29 @@ Because neither pointer ever steps backward, both traverse the array at most onc
 00:00:13.156 --> 00:00:16.080
 Total time drops from quadratic to linear.
 
-00:00:16.400 --> 00:00:21.109
+00:00:16.367 --> 00:00:21.075
 On a sorted array, start pointers at the minimum and maximum elements.
 
-00:00:21.109 --> 00:00:27.364
+00:00:21.075 --> 00:00:27.331
 If their sum is too small, advance the left pointer; if too large, retreat the right pointer.
 
-00:00:27.364 --> 00:00:31.400
+00:00:27.331 --> 00:00:31.367
 Each comparison eliminates an entire row or column of pairs.
 
-00:00:31.700 --> 00:00:37.724
+00:00:31.667 --> 00:00:37.690
 For subarray constraints, advance the right pointer step by step to include new elements.
 
-00:00:37.724 --> 00:00:44.559
+00:00:37.690 --> 00:00:44.526
 Whenever the current segment violates the condition, advance the left pointer until validity returns.
 
-00:00:44.559 --> 00:00:49.500
+00:00:44.526 --> 00:00:49.467
 Every right endpoint immediately records its furthest valid left partner.
 
-00:00:49.833 --> 00:00:55.037
+00:00:49.767 --> 00:00:54.970
 Two pointers also synchronize two sorted sequences in a single linear sweep.
 
-00:00:55.037 --> 00:01:00.651
+00:00:54.970 --> 00:01:00.584
 Always advance the pointer holding the smaller element to merge or intersect sets.
 
-00:01:00.651 --> 00:01:04.964
+00:01:00.584 --> 00:01:04.898
 Skip equal neighbors on the fly when unique pairs are required.
