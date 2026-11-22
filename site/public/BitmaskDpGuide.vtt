@@ -9,26 +9,26 @@ Bit i is one if item i belongs to the subset and zero otherwise.
 00:00:12.105 --> 00:00:20.120
 Bitwise operations test membership, add elements, and remove elements in a single CPU instruction.
 
-00:00:20.400 --> 00:00:31.297
+00:00:20.375 --> 00:00:31.272
 Because setting a new bit always produces a strictly larger integer, iterating masks from zero up to two to the N minus one is naturally topological.
 
-00:00:31.297 --> 00:00:38.317
+00:00:31.272 --> 00:00:38.292
 From a valid state, transition to each unset bit using bitwise OR with one shifted left by next.
 
-00:00:38.317 --> 00:00:42.120
+00:00:38.292 --> 00:00:42.095
 Flatten 2D tables into 1D lists when speed is tight.
 
-00:00:42.400 --> 00:00:52.252
+00:00:42.375 --> 00:00:52.227
 Checking all permutations of twenty items takes over two quintillion steps, whereas bitmask DP uses only twenty million operations.
 
-00:00:52.252 --> 00:00:58.494
+00:00:52.227 --> 00:00:58.469
 Only the set of visited items and possibly the last item matter for future choices.
 
-00:00:58.494 --> 00:01:04.360
+00:00:58.469 --> 00:01:04.335
 Compressing ordering history into a subset mask makes NP-hard tours tractable.
 
-00:01:04.633 --> 00:01:16.697
+00:01:04.625 --> 00:01:16.689
 To iterate over all submasks of a mask m, repeatedly set sub to sub minus one bitwise-and m; across all masks this takes O(3 to the N) total steps.
 
-00:01:16.697 --> 00:01:27.284
+00:01:16.689 --> 00:01:27.276
 When summing over all subsets for every mask, Sum Over Subsets DP propagates one bit position at a time in O(N times 2 to the N).

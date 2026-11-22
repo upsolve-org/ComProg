@@ -9,22 +9,22 @@ Convex cost functions and Euclidean distance sums often follow this unimodal sha
 00:00:13.175 --> 00:00:17.800
 Confirm there are no flat plateaus before applying ternary search.
 
-00:00:18.067 --> 00:00:23.156
+00:00:18.083 --> 00:00:23.172
 Place two interior probes at one-third and two-thirds of the current interval.
 
-00:00:23.156 --> 00:00:29.028
+00:00:23.172 --> 00:00:29.044
 Evaluating the objective at both points reveals which outer third cannot hold the optimum.
 
-00:00:29.028 --> 00:00:32.747
+00:00:29.044 --> 00:00:32.763
 Discard the worse side and keep the remaining two-thirds.
 
-00:00:33.033 --> 00:00:37.927
+00:00:33.042 --> 00:00:37.935
 Each comparison shrinks the interval length to two-thirds of its previous size.
 
-00:00:37.927 --> 00:00:42.759
+00:00:37.935 --> 00:00:42.767
 Eighty iterations reduce a massive coordinate range down to machine precision.
 
-00:00:42.759 --> 00:00:47.033
+00:00:42.767 --> 00:00:47.042
 The check function only needs to evaluate the cost at a single point.
 
 00:00:47.333 --> 00:00:53.698

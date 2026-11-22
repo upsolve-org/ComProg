@@ -18,17 +18,17 @@ In an ICPC-style round, teams are ranked first by problems solved, then by penal
 00:00:23.055 --> 00:00:25.107
 Check the rules for your event.
 
-00:00:25.400 --> 00:00:29.388
+00:00:25.375 --> 00:00:29.363
 Passing pretests is provisional in rounds that use them.
 
-00:00:29.388 --> 00:00:34.231
+00:00:29.363 --> 00:00:34.206
 A later system test can expose a missed boundary or a slow approach.
 
-00:00:34.231 --> 00:00:37.720
+00:00:34.206 --> 00:00:37.695
 Try the smallest input and a case near the limit.
 
-00:00:38.000 --> 00:00:41.737
+00:00:37.958 --> 00:00:41.695
 After the round, find the first assumption that failed.
 
-00:00:41.737 --> 00:00:47.920
+00:00:41.695 --> 00:00:47.878
 Make a small counterexample, explain the fix, and solve the problem again before moving on.

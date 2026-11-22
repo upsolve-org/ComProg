@@ -9,29 +9,29 @@ Each component forms a directed tree rooted at a representative element.
 00:00:12.146 --> 00:00:17.320
 Two nodes belong to the same component if and only if they share a root.
 
-00:00:17.600 --> 00:00:24.206
+00:00:17.583 --> 00:00:24.190
 During a find operation, redirect every visited node on the path so it points directly to the root.
 
-00:00:24.206 --> 00:00:27.876
+00:00:24.190 --> 00:00:27.860
 Path compression flattens tall chains into broad stars.
 
-00:00:27.876 --> 00:00:31.880
+00:00:27.860 --> 00:00:31.863
 Future queries on those nodes finish in almost a single hop.
 
-00:00:32.167 --> 00:00:38.348
+00:00:32.125 --> 00:00:38.307
 When merging two roots, attach the smaller tree underneath the root of the larger tree.
 
-00:00:38.348 --> 00:00:43.109
+00:00:38.307 --> 00:00:43.067
 Union by size keeps tree depth logarithmic even before compression.
 
-00:00:43.109 --> 00:00:48.367
+00:00:43.067 --> 00:00:48.325
 Combined with path compression, operations run in amortized constant time.
 
-00:00:48.667 --> 00:00:56.642
+00:00:48.583 --> 00:00:56.559
 Store extra metadata such as component size, minimum element, or parity at each root and merge it during union.
 
-00:00:56.642 --> 00:01:03.037
+00:00:56.559 --> 00:01:02.954
 When a problem deletes edges, process the operations in reverse order as edge insertions.
 
-00:01:03.037 --> 00:01:06.918
+00:01:02.954 --> 00:01:06.834
 DSU turns dynamic connectivity into fast root lookups.

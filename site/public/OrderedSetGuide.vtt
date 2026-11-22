@@ -9,29 +9,29 @@ When updates and order-statistic queries interleave, naive list insertions degra
 00:00:14.931 --> 00:00:20.080
 We emulate an ordered set using a Fenwick tree or square-root buckets.
 
-00:00:20.367 --> 00:00:27.032
+00:00:20.333 --> 00:00:26.999
 If all possible keys are known ahead of time, sort and deduplicate them into compressed ranks.
 
-00:00:27.032 --> 00:00:33.130
+00:00:26.999 --> 00:00:33.097
 Maintain a Fenwick tree of counts where inserting adds one and deleting subtracts one.
 
-00:00:33.130 --> 00:00:39.087
+00:00:33.097 --> 00:00:39.053
 Prefix queries immediately report how many active elements are smaller than any key.
 
-00:00:39.367 --> 00:00:45.658
+00:00:39.333 --> 00:00:45.625
 To find the k-th smallest active element, binary-lift directly down the Fenwick tree array.
 
-00:00:45.658 --> 00:00:50.981
+00:00:45.625 --> 00:00:50.948
 Step by decreasing powers of two whenever the cumulative count stays below k.
 
-00:00:50.981 --> 00:00:56.927
+00:00:50.948 --> 00:00:56.893
 This single logarithmic walk avoids an extra factor of log N from outer binary search.
 
-00:00:57.200 --> 00:01:04.474
+00:00:57.167 --> 00:01:04.440
 When keys cannot be known offline, partition the sorted elements into blocks of size roughly square root of N.
 
-00:01:04.474 --> 00:01:10.491
+00:01:04.440 --> 00:01:10.458
 Locate the target block and position with bisect, and split any block that grows too large.
 
-00:01:10.491 --> 00:01:13.731
+00:01:10.458 --> 00:01:13.698
 This sorted-list design runs fast in pure Python.

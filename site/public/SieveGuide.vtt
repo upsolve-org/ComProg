@@ -18,20 +18,20 @@ To factor any number x, repeatedly divide x by spf[x] until x reaches one.
 00:00:36.900 --> 00:00:44.920
 Thousands of factorization queries finish in logarithmic time each instead of square-root trial division.
 
-00:00:45.200 --> 00:00:51.263
+00:00:45.208 --> 00:00:51.271
 When a single number reaches ten to the twelfth, a full array sieve cannot fit in memory.
 
-00:00:51.263 --> 00:01:00.119
+00:00:51.271 --> 00:01:00.128
 Divide out factors d up to the square root of n; if the remaining value exceeds one after the loop, that cofactor is prime itself.
 
-00:01:00.119 --> 00:01:07.000
+00:01:00.128 --> 00:01:07.008
 For sixty-four-bit primality checks, deterministic Miller-Rabin bases test primality in microseconds.
 
-00:01:07.300 --> 00:01:15.068
+00:01:07.292 --> 00:01:15.059
 A segmented sieve finds all primes in a narrow interval from L to R even when R reaches ten to the twelfth.
 
-00:01:15.068 --> 00:01:23.126
+00:01:15.059 --> 00:01:23.117
 First sieve base primes up to the square root of R, then offset each base prime into the shifted window buffer.
 
-00:01:23.126 --> 00:01:27.191
+00:01:23.117 --> 00:01:27.183
 Only the window of size R minus L plus one is allocated.

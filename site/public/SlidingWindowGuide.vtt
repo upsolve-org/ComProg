@@ -18,13 +18,13 @@ Slide one position right by adding the new element and subtracting the element K
 00:00:28.487 --> 00:00:32.007
 Track the best aggregate after every single shift.
 
-00:00:32.300 --> 00:00:40.154
+00:00:32.292 --> 00:00:40.146
 For longest or shortest valid subarray problems, expand the right boundary and update your frequency map or sum.
 
-00:00:40.154 --> 00:00:45.484
+00:00:40.146 --> 00:00:45.475
 Use a while-loop to advance the left boundary whenever the invariant breaks.
 
-00:00:45.484 --> 00:00:49.060
+00:00:45.475 --> 00:00:49.052
 Record the optimal length when the window is valid.
 
 00:00:49.333 --> 00:00:57.802

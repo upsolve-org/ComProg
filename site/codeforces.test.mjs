@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import fs from 'node:fs'
 import {
   buildSignedUrl,
   fetchCodeforcesAccount,
@@ -13,6 +14,8 @@ import {
   upsertLeaderboardEntry,
   validateHandle
 } from './codeforces.mjs'
+import { chapterAssessments } from './assessments.mjs'
+import { recommendedByChapter } from './recommended.mjs'
 
 const sampleProblems = [
   { id: '4A', contestId: 4, index: 'A', name: 'Watermelon', rating: 800, tags: ['brute force', 'math'], solvedCount: 550000 },
@@ -164,4 +167,27 @@ test('fetchCodeforcesAccount and leaderboard sorting rank users by problems solv
     [2, 'charlie', 340],
     [3, 'bob', 340]
   ])
+})
+
+test('every chapter has multiple coding assessments with >= 6 test cases and verified Codeforces recommendations', () => {
+  const packed = JSON.parse(fs.readFileSync(new URL('./public/codeforces-problems.json', import.meta.url), 'utf8'))
+  const byId = new Map(unpackProblems(packed).problems.map(p => [p.id, p]))
+  const chapters = Object.keys(chapterAssessments)
+  assert.equal(chapters.length, 12)
+  let totalDrills = 0
+  for (const ch of chapters) {
+    const drills = chapterAssessments[ch]
+    assert.ok(drills.length >= 2, `${ch} should have at least 2 coding assessments`)
+    for (const d of drills) {
+      totalDrills++
+      assert.ok(d.cases.length >= 6, `${d.id} should have at least 6 test cases`)
+      assert.ok(d.hints.length >= 3, `${d.id} should have hints`)
+    }
+    const rec = recommendedByChapter[ch]
+    assert.ok(rec && rec.problems.length >= 5, `${ch} should have >= 5 recommended CF problems`)
+    for (const p of rec.problems) {
+      assert.ok(byId.has(p.id), `Recommended problem ${p.id} in ${ch} must exist in scraped CF dataset`)
+    }
+  }
+  assert.ok(totalDrills >= 28)
 })

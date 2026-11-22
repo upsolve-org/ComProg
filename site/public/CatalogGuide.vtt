@@ -9,29 +9,29 @@ Start by identifying whether the problem asks for an extremum, a count, a reacha
 00:00:14.658 --> 00:00:19.440
 Cross-check input limits immediately to narrow the candidate data structures.
 
-00:00:19.733 --> 00:00:27.506
+00:00:19.708 --> 00:00:27.481
 Harder division problems rarely test a single algorithm in isolation; instead they chain two standard primitives together.
 
-00:00:27.506 --> 00:00:33.432
+00:00:27.481 --> 00:00:33.407
 Flattening a tree with an Euler tour turns a subtree problem into a Fenwick tree range query.
 
-00:00:33.432 --> 00:00:39.293
+00:00:33.407 --> 00:00:39.268
 Binary searching the answer turns an optimization problem into a simple greedy or BFS check.
 
-00:00:39.567 --> 00:00:47.368
+00:00:39.542 --> 00:00:47.343
 When a submission fails on a hidden test, write a tiny random input generator and a ten-line brute-force solver.
 
-00:00:47.368 --> 00:00:52.453
+00:00:47.343 --> 00:00:52.428
 Run both on thousands of ten-element inputs until their outputs disagree.
 
-00:00:52.453 --> 00:00:57.887
+00:00:52.428 --> 00:00:57.862
 Tracing a five-element counterexample exposes the broken edge case in minutes.
 
-00:00:58.167 --> 00:01:06.558
+00:00:58.125 --> 00:01:06.516
 Consistent rating growth comes from solving problems slightly above your comfort zone and upsolving every contest within twenty-four hours.
 
-00:01:06.558 --> 00:01:11.568
+00:01:06.516 --> 00:01:11.526
 When you read an editorial, close it before writing the code yourself from scratch.
 
-00:01:11.568 --> 00:01:16.458
+00:01:11.526 --> 00:01:16.416
 Log the key observation that unlocked each problem so you recognize it next time.

@@ -29,7 +29,7 @@ test('lesson videos derive chapter timestamps from narration scripts and WebVTT 
       { title: 'Choose a round', stamp: '0:00' },
       { title: 'Read the standings', stamp: '0:12' },
       { title: 'Trace a submission', stamp: '0:25' },
-      { title: 'Upsolve after the round', stamp: '0:38' }
+      { title: 'Upsolve after the round', stamp: '0:37' }
     ]
   )
   assert.ok(contestChapters.every((ch, i) => i === 0 ? ch.start === 0 : ch.start > contestChapters[i - 1].start))

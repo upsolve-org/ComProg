@@ -2359,3 +2359,231 @@ textarea {
   background: var(--brand-green);
 }
 
+/* Course Outline Step Badges */
+.sidebar .chapter-group a.outline-step {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.step-badge {
+  flex: 0 0 auto;
+  font-family: var(--hpv2-font-meta);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.12rem 0.34rem;
+  border: 1px solid var(--hermes-stroke);
+  color: var(--quiet);
+  background: var(--hermes-dark-well);
+}
+
+.step-badge.is-code {
+  color: var(--brand-green-bright);
+  border-color: rgba(70, 201, 76, 0.4);
+  background: rgba(21, 122, 26, 0.16);
+}
+
+.step-badge.is-video {
+  color: #60a5fa;
+  border-color: rgba(96, 165, 250, 0.35);
+  background: rgba(37, 99, 235, 0.14);
+}
+
+.step-badge.is-quiz {
+  color: #f5b942;
+  border-color: rgba(245, 185, 66, 0.35);
+  background: rgba(180, 83, 9, 0.14);
+}
+
+.step-badge.is-train {
+  color: #c084fc;
+  border-color: rgba(192, 132, 252, 0.35);
+  background: rgba(126, 34, 206, 0.14);
+}
+
+.sidebar .chapter-group a.outline-step.is-done .step-label::after {
+  content: " ✓";
+  color: var(--brand-green-bright);
+  font-weight: 700;
+}
+
+/* Coding Assessment Spec & Multi-Test Results */
+.drill-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.6rem;
+}
+
+.drill-case-count {
+  font-family: var(--hpv2-font-meta);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--surface-panel-muted);
+}
+
+.drill-samples {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.drill-sample-card {
+  background: var(--surface-panel-card);
+  border: 1px solid var(--surface-panel-line);
+  padding: 0.65rem 0.85rem;
+}
+
+.drill-sample-label {
+  font-family: var(--hpv2-font-meta);
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--surface-panel-ink);
+  margin-bottom: 0.45rem;
+}
+
+.drill-sample-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.6rem;
+}
+
+.drill-io {
+  margin: 0.25rem 0 0;
+  padding: 0.45rem 0.6rem;
+  font-family: var(--hpv2-font-meta);
+  font-size: 0.8rem;
+  background: var(--surface-panel-bg);
+  border: 1px solid var(--surface-panel-solid-line);
+  color: var(--surface-panel-ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.test-results {
+  margin: 0.65rem 0;
+  border: 1px solid var(--hermes-stroke);
+  background: var(--hermes-dark-well);
+}
+
+.test-summary {
+  font-family: var(--hpv2-font-meta);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--hermes-stroke);
+}
+
+.test-summary.is-all-pass {
+  background: rgba(21, 122, 26, 0.22);
+  color: var(--brand-green-bright);
+}
+
+.test-summary.is-has-fail {
+  background: rgba(166, 36, 24, 0.2);
+  color: var(--brand-red-bright);
+}
+
+.test-list {
+  display: grid;
+}
+
+.test-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.42rem 0.75rem;
+  font-family: var(--hpv2-font-meta);
+  font-size: 0.74rem;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.08);
+}
+
+.test-row.is-pass .test-mark,
+.test-row.is-pass .test-status {
+  color: var(--brand-green-bright);
+  font-weight: 700;
+}
+
+.test-row.is-fail .test-mark,
+.test-row.is-fail .test-status {
+  color: var(--brand-red-bright);
+  font-weight: 700;
+}
+
+.test-name {
+  flex: 1 1 auto;
+  color: var(--hermes-white);
+}
+
+.test-diff {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--hpv2-font-meta);
+  font-size: 0.74rem;
+  background: #1b1515;
+  color: #f5c2c0;
+  border-bottom: 1px solid var(--hermes-stroke);
+  white-space: pre-wrap;
+}
+
+/* Recommended Codeforces Problems Section */
+.rec-section {
+  margin-top: 1.4rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.rec-compact {
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--surface-panel-line);
+}
+
+.rec-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.rec-subtitle {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--surface-panel-muted);
+}
+
+.rec-tier-badge {
+  display: inline-block;
+  font-family: var(--hpv2-font-meta);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.16rem 0.48rem;
+  border: 1px solid currentColor;
+}
+
+.rec-tier-badge.is-foundation { color: #157a1a; background: rgba(21, 122, 26, 0.1); }
+.rec-tier-badge.is-core { color: #1d4ed8; background: rgba(29, 78, 216, 0.1); }
+.rec-tier-badge.is-challenge { color: #b91c1c; background: rgba(185, 28, 28, 0.1); }
+
+.rec-topic-text {
+  font-size: 0.82rem;
+  color: var(--surface-panel-muted);
+}
+
+.rec-why-cell {
+  font-size: 0.84rem;
+  color: var(--surface-panel-muted);
+  min-width: 14rem;
+}
+
+.rec-compact-foot {
+  display: flex;
+  justify-content: flex-end;
+}
+

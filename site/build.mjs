@@ -6,6 +6,9 @@ import { labs } from './labs.mjs'
 import { cppLabs } from './labs-cpp.mjs'
 import { quizzes } from './quizzes.mjs'
 import { cppQuizzes } from './quizzes-cpp.mjs'
+import { chapterAssessments } from './assessments.mjs'
+import { recommendedByChapter } from './recommended.mjs'
+import { unpackProblems } from './codeforces.mjs'
 import { buildFilmChapters, filmNotes } from './video.mjs'
 
 const root = new URL('../', import.meta.url)
@@ -88,7 +91,33 @@ const cppOnly = new Set(['cpp_cp_guide.md', 'ordered_set_pbds.md', 'session_card
   'session_card_06.md', 'session_card_07.md', 'session_card_08.md', 'session_card_09.md',
   'session_card_10.md'])
 
-async function buildCourse({ base, moduleFolder, order, lessonList, quizList, skip }) {
+const cfPacked = JSON.parse(await readFile(new URL('site/public/codeforces-problems.json', root), 'utf8'))
+const cfById = new Map(unpackProblems(cfPacked).problems.map(p => [p.id, p]))
+
+function buildRecommended(folder) {
+  const entry = recommendedByChapter[folder]
+  if (!entry) return null
+  return {
+    cfTag: entry.cfTag,
+    subtitle: entry.subtitle,
+    problems: entry.problems.map(item => {
+      const live = cfById.get(item.id)
+      return {
+        id: item.id,
+        name: live?.name ?? item.id,
+        rating: live?.rating ?? null,
+        tags: live?.tags ?? [entry.cfTag],
+        solvedCount: live?.solvedCount ?? 0,
+        url: live?.url ?? `https://codeforces.com/problemset/problem/${item.id}`,
+        topic: item.topic,
+        tier: item.tier,
+        why: item.why
+      }
+    })
+  }
+}
+
+async function buildCourse({ base, moduleFolder, order, lessonList, quizList, skip, language }) {
   return Promise.all(moduleFolder.map(async (folder, index) => {
     const dir = new URL(base + folder + '/', root)
     const notes = (await readdir(dir)).filter(name =>
@@ -108,6 +137,17 @@ async function buildCourse({ base, moduleFolder, order, lessonList, quizList, sk
           .replace(/^## [^\n]*Complexity & Analysis\r?\n- \*\*Time Complexity:\*\* See docstrings[^\n]*\n- \*\*Space Complexity:\*\* See docstrings[^\n]*\n/gm, '')
       }
     }))
+    const assessments = (chapterAssessments[folder] ?? []).map(a => ({
+      id: a.id,
+      afterNote: language === 'cpp' && a.afterNoteCpp ? a.afterNoteCpp : a.afterNote,
+      title: a.title,
+      difficulty: a.difficulty,
+      ...(a.labIndex !== undefined ? { labIndex: a.labIndex } : {}),
+      task: a.task,
+      cases: a.cases,
+      hints: a.hints,
+      starter: language === 'cpp' ? a.cppStarter : a.pythonStarter
+    }))
     return {
       id: folder,
       title: titles[index],
@@ -115,6 +155,8 @@ async function buildCourse({ base, moduleFolder, order, lessonList, quizList, sk
       notes: [...noteOrder.map(stem => orderedNotes.find(note => note.name === stem + '.md')).filter(Boolean),
         ...orderedNotes.filter(note => !note.taught)],
       quizzes: quizList[index],
+      assessments,
+      recommended: buildRecommended(folder),
       lab: lessonList[index] && {
         title: lessonList[index].title,
         task: lessonList[index].task
@@ -125,11 +167,11 @@ async function buildCourse({ base, moduleFolder, order, lessonList, quizList, sk
 
 const course = await buildCourse({
   base: '', moduleFolder: folders, order: pythonOrder, lessonList: labs, quizList: quizzes,
-  skip: cppOnly
+  skip: cppOnly, language: 'python'
 })
 const cppCourse = await buildCourse({
   base: 'cpp/', moduleFolder: cppFolders, order: cppOrder, lessonList: cppLabs, quizList: cppQuizzes,
-  skip: pythonOnly
+  skip: pythonOnly, language: 'cpp'
 })
 
 await mkdir(dist, { recursive: true })

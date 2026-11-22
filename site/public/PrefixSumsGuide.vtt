@@ -9,29 +9,29 @@ Padding with a leading zero aligns one-based prefixes cleanly with zero-based sl
 00:00:11.029 --> 00:00:14.200
 Building the table takes a single linear pass.
 
-00:00:14.467 --> 00:00:21.854
+00:00:14.458 --> 00:00:21.845
 Any contiguous range sum equals the prefix up to the right boundary minus the prefix before the left boundary.
 
-00:00:21.854 --> 00:00:25.883
+00:00:21.845 --> 00:00:25.875
 Thousands of range sum queries finish in constant time each.
 
-00:00:25.883 --> 00:00:29.107
+00:00:25.875 --> 00:00:29.098
 Never rescan the slice when the array is static.
 
-00:00:29.400 --> 00:00:32.832
+00:00:29.375 --> 00:00:32.807
 A difference array is the inverse of a prefix sum.
 
-00:00:32.832 --> 00:00:39.697
+00:00:32.807 --> 00:00:39.672
 Adding a value to a range only touches the left endpoint and the index just past the right endpoint.
 
-00:00:39.697 --> 00:00:44.571
+00:00:39.672 --> 00:00:44.546
 After all updates finish, one prefix pass reconstructs the final array.
 
-00:00:44.867 --> 00:00:50.272
+00:00:44.833 --> 00:00:50.239
 Two-dimensional prefix sums accumulate rectangle totals using inclusion-exclusion.
 
-00:00:50.272 --> 00:00:56.732
+00:00:50.239 --> 00:00:56.699
 Add the top and left rectangles, subtract the double-counted corner, and include the current cell.
 
-00:00:56.732 --> 00:01:00.358
+00:00:56.699 --> 00:01:00.324
 Subgrid queries then run in four arithmetic operations.
