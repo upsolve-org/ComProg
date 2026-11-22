@@ -282,8 +282,11 @@ class Guide(Scene):
                 targets = [-2.7 + k * 0.9 for k in range(len(heights))]
                 self.play(
                     *(bars[idx].animate.set_x(targets[rank]) for rank, idx in enumerate(order)),
+                    rate_func=smooth, run_time=0.9,
+                )
+                self.play(
                     *(bars[idx][0].animate.set_stroke(ACCENT, 2.2).set_fill(ACCENT_FILL, 1) for idx in order),
-                    rate_func=smooth, run_time=1.2,
+                    run_time=0.35,
                 )
                 return
             if index == 1:
@@ -391,7 +394,8 @@ class Guide(Scene):
             )
             self.play(
                 *(cells[k].animate.set_opacity(0.22) for k in range(6, 8)),
-                hi.animate.next_to(cells[4], DOWN, buff=0.28),
+                lo.animate.next_to(cells[4], DOWN, buff=0.28).shift(LEFT * 0.28),
+                hi.animate.next_to(cells[4], DOWN, buff=0.28).shift(RIGHT * 0.28),
                 mid.animate.next_to(cells[4], UP, buff=0.1),
                 cells[4][0].animate.set_stroke(AMBER, 3.2),
                 Transform(info, code("First True boundary locked at index 4 (value 15)", 20, ACCENT).move_to([0, 1.9, 0])),
@@ -400,29 +404,27 @@ class Guide(Scene):
             return
 
         if name == "TernarySearchGuide":
-            ax_x = Line([-4.8, -1.2, 0], [4.8, -1.2, 0], color=MUTED, stroke_width=2)
-            ax_y = Line([-4.8, -1.2, 0], [-4.8, 2.1, 0], color=MUTED, stroke_width=2)
-            xs = np.linspace(-4.2, 4.2, 80)
-            pts = [[x, 0.16 * (x - 0.6) ** 2 - 0.75, 0] for x in xs]
+            ax_x = Line([-4.6, -1.25, 0], [4.6, -1.25, 0], color=MUTED, stroke_width=2)
+            ax_y = Line([-4.6, -1.25, 0], [-4.6, 2.0, 0], color=MUTED, stroke_width=2)
+            xs = np.linspace(-3.6, 4.0, 80)
+            pts = [[x, 0.12 * (x - 0.5) ** 2 - 0.85, 0] for x in xs]
             curve = VMobject(color=ACCENT, stroke_width=3.2).set_points_smoothly(pts)
             self.play(Create(ax_x), Create(ax_y), Create(curve), run_time=0.45)
-            x1, x2 = -1.6, 1.5
-            y1, y2 = 0.16 * (x1 - 0.6) ** 2 - 0.75, 0.16 * (x2 - 0.6) ** 2 - 0.75
-            l1 = Line([x1, -1.2, 0], [x1, y1, 0], color=BAD, stroke_width=2.4)
-            l2 = Line([x2, -1.2, 0], [x2, y2, 0], color=AMBER, stroke_width=2.4)
+            x1, x2 = -1.6, 1.8
+            y1, y2 = 0.12 * (x1 - 0.5) ** 2 - 0.85, 0.12 * (x2 - 0.5) ** 2 - 0.85
+            l1 = Line([x1, -1.25, 0], [x1, y1, 0], color=BAD, stroke_width=2.4)
+            l2 = Line([x2, -1.25, 0], [x2, y2, 0], color=AMBER, stroke_width=2.4)
             d1, d2 = Dot([x1, y1, 0], color=BAD, radius=0.09), Dot([x2, y2, 0], color=AMBER, radius=0.09)
             t1, t2 = code("m1", 17, BAD).next_to(l1, DOWN, buff=0.1), code("m2", 17, AMBER).next_to(l2, DOWN, buff=0.1)
-            shade = Rectangle(width=2.6, height=3.0, stroke_width=0, fill_color=BAD, fill_opacity=0.15).move_to([-2.9, 0.35, 0])
-            msg = code("f(m1) > f(m2)  ->  eliminate outer third [L, m1]", 19, ACCENT).move_to([0.4, 1.85, 0])
+            shade = Rectangle(width=2.5, height=2.9, stroke_width=0, fill_color=BAD, fill_opacity=0.15).move_to([-2.85, 0.25, 0])
+            msg = code("f(m1) > f(m2)  ->  eliminate outer third [L, m1]", 19, ACCENT).move_to([0.4, 1.95, 0])
             self.play(Create(l1), Create(l2), FadeIn(d1), FadeIn(d2), FadeIn(t1), FadeIn(t2), run_time=0.4)
             self.play(FadeIn(shade), FadeIn(msg), run_time=0.4)
-            opt_dot = Dot([0.6, -0.75, 0], color=ACCENT, radius=0.12)
-            opt_lbl = code("minimum x*", 18, ACCENT).next_to(opt_dot, DOWN, buff=0.18)
+            opt_dot = Dot([0.5, -0.85, 0], color=ACCENT, radius=0.11)
+            opt_lbl = code("minimum x*", 18, ACCENT).next_to(opt_dot, UP, buff=0.25)
             self.play(
-                l1.animate.move_to([0.3, -0.97, 0]),
-                l2.animate.move_to([0.9, -0.97, 0]),
                 FadeIn(opt_dot, scale=1.4), FadeIn(opt_lbl),
-                rate_func=smooth, run_time=0.75,
+                rate_func=smooth, run_time=0.7,
             )
             return
 
@@ -695,20 +697,20 @@ class Guide(Scene):
             if name == "NimGuide":
                 piles = VGroup()
                 for idx_p, (cnt, bin_s) in enumerate([(3, "011"), (5, "101"), (7, "111")]):
-                    x_pos = -3.6 + idx_p * 2.1
+                    x_pos = -4.8 + idx_p * 1.95
                     stones = VGroup(*(
-                        Circle(radius=0.17, stroke_color=ACCENT, fill_color=ACCENT, fill_opacity=0.35)
-                        .move_to([x_pos + (s % 2) * 0.42, -0.45 + (s // 2) * 0.42, 0])
+                        Circle(radius=0.16, stroke_color=ACCENT, fill_color=ACCENT, fill_opacity=0.35)
+                        .move_to([x_pos + (s % 2) * 0.4, -0.5 + (s // 2) * 0.4, 0])
                         for s in range(cnt)
                     ))
-                    lbl = code(f"pile={cnt} ({bin_s})", 16, PAPER).move_to([x_pos + 0.21, -1.05, 0])
+                    lbl = code(f"pile={cnt} ({bin_s})", 15, PAPER).move_to([x_pos + 0.2, -1.1, 0])
                     piles.add(VGroup(stones, lbl))
-                xor_box = box_cell("3 ^ 5 ^ 7 = 1 != 0  (Winning N-state)", w=4.5, h=0.82,
-                                   stroke=ACCENT, fill=ACCENT_FILL, color=ACCENT, size=17).move_to([2.6, 0.35, 0])
+                xor_box = box_cell("3 ^ 5 ^ 7 = 1 != 0 (N-state)", w=4.8, h=0.86,
+                                   stroke=ACCENT, fill=ACCENT_FILL, color=ACCENT, size=17).move_to([3.1, 0.35, 0])
                 self.play(FadeIn(piles), FadeIn(xor_box), run_time=0.5)
                 self.play(
                     FadeOut(piles[0][0][-1], shift=UP * 0.3),
-                    Transform(xor_box[1], code("Move 3 -> 2:  2 ^ 5 ^ 7 = 0 (P-state)", 17, AMBER).move_to(xor_box)),
+                    Transform(xor_box[1], code("3->2:  2 ^ 5 ^ 7 = 0 (P-state)", 17, AMBER, width=4.4).move_to(xor_box)),
                     run_time=0.75,
                 )
                 return

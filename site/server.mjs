@@ -5,6 +5,7 @@ import { labs } from './labs.mjs'
 import { cppLabs } from './labs-cpp.mjs'
 import { tutorReply } from './tutor.mjs'
 import { judgeSubmission, judgeCppSubmission, runCpp } from './judge.mjs'
+import { scrapeCodeforcesProblems, packProblems } from './codeforces.mjs'
 
 const dist = new URL('../dist/', import.meta.url)
 const types = {
@@ -26,7 +27,34 @@ let inFlight = 0
 let judgeInFlight = 0
 let judgeBudget = { until: 0, count: 0 }
 let runBudget = { until: 0, count: 0 }
+let cfCache = null
+let cfLastRefresh = 0
+let cfRefreshPromise = null
 const cdn = 'https://cdn.jsdelivr.net'
+
+try {
+  cfCache = await readFile(new URL('codeforces-problems.json', dist))
+  cfLastRefresh = Date.now()
+} catch { /* Will scrape on first request if missing */ }
+
+async function refreshCodeforcesCache() {
+  if (cfRefreshPromise) return cfRefreshPromise
+  cfRefreshPromise = (async () => {
+    try {
+      const problems = await scrapeCodeforcesProblems({
+        apiKey: process.env.CF_API_KEY,
+        apiSecret: process.env.CF_API_SECRET
+      })
+      const packed = packProblems(problems)
+      cfCache = Buffer.from(JSON.stringify(packed), 'utf8')
+      cfLastRefresh = Date.now()
+      return packed
+    } finally {
+      cfRefreshPromise = null
+    }
+  })()
+  return cfRefreshPromise
+}
 
 function allowance(ip) {
   const now = Date.now()
@@ -74,6 +102,29 @@ createServer(async (req, res) => {
   res.setHeader('x-content-type-options', 'nosniff')
   res.setHeader('referrer-policy', 'no-referrer')
   const path = req.url.split('?')[0]
+  if (path === '/api/codeforces' && ['GET', 'HEAD'].includes(req.method)) {
+    if (!cfCache || Date.now() - cfLastRefresh > 6 * 3600_000) {
+      await refreshCodeforcesCache().catch(() => {})
+    }
+    if (!cfCache) return json(res, 503, { error: 'Codeforces problemset unavailable.' })
+    res.writeHead(200, { 'content-type': types.json, 'cache-control': 'public, max-age=300' })
+    return res.end(req.method === 'HEAD' ? undefined : cfCache)
+  }
+  if (path === '/api/codeforces/refresh' && req.method === 'POST') {
+    const why = refused(req)
+    if (why === 'origin') return json(res, 403, { error: 'Refresh from the course.' })
+    if (Date.now() - cfLastRefresh < 30_000 && cfCache) {
+      res.writeHead(200, { 'content-type': types.json, 'cache-control': 'no-store' })
+      return res.end(cfCache)
+    }
+    try {
+      await refreshCodeforcesCache()
+      res.writeHead(200, { 'content-type': types.json, 'cache-control': 'no-store' })
+      return res.end(cfCache)
+    } catch {
+      return json(res, 503, { error: 'Could not refresh from Codeforces right now.' })
+    }
+  }
   if (path === '/api/submit' && req.method === 'POST') {
     const why = refused(req)
     if (why === 'origin') return json(res, 403, { error: 'Submit from the course.' })

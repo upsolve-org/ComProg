@@ -11,6 +11,7 @@ import contestVtt from './public/ContestGuide.vtt'
 import { activeChapterIndex, buildFilmChapters, filmNotes } from './video.mjs'
 import { detectLanguage, highlightHTML, languageBadge } from './highlight.mjs'
 import { createVisualizer, mountVisualizer } from './visualizers.mjs'
+import { filterAndSortProblems, ratingTier, unpackProblems } from './codeforces.mjs'
 import '@fontsource-variable/geist/wght.css'
 import '@fontsource/jetbrains-mono/latin-400.css'
 import 'katex/dist/katex.min.css'
@@ -199,6 +200,61 @@ const submissions = new Set()
 let editorChapter
 let activeVisualizers = []
 let lastRoute
+let cfDataset = null
+let cfLoading = false
+const cfState = {
+  tags: [],
+  tagMode: 'all',
+  minRating: 0,
+  maxRating: 9999,
+  includeUnrated: false,
+  search: '',
+  sort: 'rating-asc',
+  onlySolved: 'all',
+  showAllTags: false,
+  page: 1,
+  pageSize: 50,
+  spotlight: null
+}
+
+function getSolvedProblems() {
+  try {
+    const raw = localStorage.getItem('comprog:cf:solved')
+    return new Set(raw ? JSON.parse(raw) : [])
+  } catch {
+    return new Set()
+  }
+}
+
+function saveSolvedProblems(set) {
+  try {
+    localStorage.setItem('comprog:cf:solved', JSON.stringify(Array.from(set)))
+  } catch { /* Storage is optional */ }
+}
+
+async function loadCodeforcesData(forceRefresh = false) {
+  if (cfDataset && !forceRefresh) return cfDataset
+  const endpoints = forceRefresh
+    ? [['/api/codeforces/refresh', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' }], ['/api/codeforces'], ['/codeforces-problems.json']]
+    : [['/api/codeforces'], ['/codeforces-problems.json']]
+  for (const [url, opts] of endpoints) {
+    try {
+      const res = await fetch(url, opts)
+      if (!res.ok) continue
+      const packed = await res.json()
+      if (packed?.items?.length) {
+        cfDataset = unpackProblems(packed)
+        return cfDataset
+      }
+    } catch { /* Try next fallback */ }
+  }
+  throw new Error('Could not load Codeforces problemset.')
+}
+
+function isTrainingRoute() {
+  const raw = location.hash.slice(1)
+  return raw === 'training' || raw === 'python/training' || raw === 'cpp/training'
+}
 
 // "#cpp/<chapter>/<step>" or "#python/<chapter>/<step>". A bare "#<chapter>/<step>"
 // is a legacy Python link and never switches the active course.
@@ -317,6 +373,8 @@ function renderProgress() {
   $qs('.course-name').textContent = courseKey === 'cpp'
     ? 'Competitive programming in C++20' : 'Competitive programming in Python'
   if (!nav.children.length) {
+    const trainLink = link('⚡ Codeforces Training Arena', '#training', 'sidebar-training-link')
+    nav.append(trainLink)
     for (const item of course) {
       const group = node('details', '', 'chapter-group')
       group.append(node('summary', item.title))
@@ -326,8 +384,21 @@ function renderProgress() {
       nav.append(group)
     }
   }
-  const route = lessonURL(lesson.id, storage.get('step:' + lesson.id) || firstStep(lesson))
-  for (const [index, group] of Array.from(nav.children).entries()) {
+  const onTraining = isTrainingRoute()
+  const trainNavBtn = $('training-nav')
+  if (trainNavBtn) {
+    trainNavBtn.classList.toggle('is-active', onTraining)
+    if (onTraining) trainNavBtn.setAttribute('aria-current', 'page')
+    else trainNavBtn.removeAttribute('aria-current')
+  }
+  const sidebarTrain = nav.querySelector('.sidebar-training-link')
+  if (sidebarTrain) {
+    sidebarTrain.classList.toggle('current', onTraining)
+    if (onTraining) sidebarTrain.setAttribute('aria-current', 'page')
+    else sidebarTrain.removeAttribute('aria-current')
+  }
+  const route = onTraining ? '#training' : lessonURL(lesson.id, storage.get('step:' + lesson.id) || firstStep(lesson))
+  for (const [index, group] of Array.from(nav.querySelectorAll('.chapter-group')).entries()) {
     const item = course[index]
     if (item === lesson && nav.dataset.chapter !== item.id) group.open = true
     const quizDone = item.quizzes?.length && quizScore(item) === item.quizzes.length
@@ -343,7 +414,494 @@ function renderProgress() {
   nav.dataset.chapter = lesson.id
 }
 
+function renderTraining() {
+  const reading = $('reading')
+  reading.querySelector('video')?.pause()
+  reading.replaceChildren()
+  activeVisualizers.forEach(visualizer => visualizer.destroy())
+  activeVisualizers = []
+  lesson = lesson ?? course[0]
+  document.title = 'Codeforces Training Arena | ComProg'
+  $('title').textContent = 'Codeforces Training Arena'
+  $('position').textContent = 'Training // Problemset Filter & Rating Explorer'
+  $('tabs').replaceChildren(
+    link('← Back to Course Lessons', lessonURL(lesson.id, firstStep(lesson)), 'assignment-jump')
+  )
+  $('workspace').hidden = true
+  $('tutor').hidden = true
+  $('check').hidden = true
+  $('layout').classList.remove('with-editor')
+  $('layout').classList.add('is-full-width')
+  reading.classList.remove('is-video', 'is-quiz', 'panel-enter')
+  reading.classList.add('is-training')
+  void reading.offsetWidth
+  reading.classList.add('panel-enter')
+  $('pagination').replaceChildren()
+  renderProgress()
+
+  const container = node('div', '', 'cf-arena')
+  reading.append(container)
+
+  if (!cfDataset) {
+    const loadingBox = node('div', 'Loading 11,500+ Codeforces problems, tags, and ratings…', 'cf-loading')
+    container.append(loadingBox)
+    if (!cfLoading) {
+      cfLoading = true
+      loadCodeforcesData().then(() => {
+        cfLoading = false
+        if (isTrainingRoute()) renderTraining()
+      }).catch(err => {
+        cfLoading = false
+        loadingBox.textContent = err.message || 'Could not load Codeforces problemset.'
+      })
+    }
+    return
+  }
+
+  const { problems, tags, tagCounts } = cfDataset
+  const solvedIds = getSolvedProblems()
+
+  // Top Header & Stats Deck
+  const topBar = node('div', '', 'cf-top-bar')
+  const statsRow = node('div', '', 'cf-stats-row')
+  const totalStat = node('div', '', 'cf-stat-card')
+  totalStat.append(node('span', 'TOTAL PROBLEMS', 'cf-stat-label'), node('strong', problems.length.toLocaleString(), 'cf-stat-val'))
+  const tagsStat = node('div', '', 'cf-stat-card')
+  tagsStat.append(node('span', 'TOPIC TAGS', 'cf-stat-label'), node('strong', String(tags.length), 'cf-stat-val'))
+  const matchStatVal = node('strong', '0', 'cf-stat-val is-accent')
+  const matchStat = node('div', '', 'cf-stat-card')
+  matchStat.append(node('span', 'MATCHING FILTER', 'cf-stat-label'), matchStatVal)
+  const solvedStatVal = node('strong', String(solvedIds.size), 'cf-stat-val')
+  const solvedStat = node('div', '', 'cf-stat-card')
+  solvedStat.append(node('span', 'SOLVED BY YOU', 'cf-stat-label'), solvedStatVal)
+  statsRow.append(totalStat, tagsStat, matchStat, solvedStat)
+
+  const actionBtns = node('div', '', 'cf-actions')
+  const randomBtn = node('button', 'Pick Random 🎲', 'primary cf-random-btn')
+  randomBtn.type = 'button'
+  const syncBtn = node('button', 'Sync Codeforces ↻', 'cf-sync-btn')
+  syncBtn.type = 'button'
+  syncBtn.onclick = async () => {
+    syncBtn.disabled = true
+    syncBtn.textContent = 'Syncing…'
+    try {
+      await loadCodeforcesData(true)
+      renderTraining()
+    } catch {
+      syncBtn.textContent = 'Sync Failed'
+      setTimeout(() => { syncBtn.textContent = 'Sync Codeforces ↻'; syncBtn.disabled = false }, 1800)
+    }
+  }
+  actionBtns.append(randomBtn, syncBtn)
+  topBar.append(statsRow, actionBtns)
+
+  // Controls Deck: Search, Tag Dropdown, Sort by Rating, Min/Max Rating, Status
+  const controls = node('div', '', 'cf-controls-grid')
+
+  // 1. Search Box
+  const searchGroup = node('div', '', 'cf-control-group')
+  const searchLabel = node('label', 'Search Problem ID or Title', 'cf-control-label')
+  searchLabel.htmlFor = 'cf-search'
+  const searchInput = node('input', '', 'cf-input')
+  searchInput.id = 'cf-search'
+  searchInput.type = 'search'
+  searchInput.placeholder = 'e.g. 4A, 1999G2, Watermelon, Dijkstra…'
+  searchInput.value = cfState.search
+  searchGroup.append(searchLabel, searchInput)
+
+  // 2. Tag Selector Dropdown
+  const tagSelectGroup = node('div', '', 'cf-control-group')
+  const tagSelectLabel = node('label', 'Filter by Tag', 'cf-control-label')
+  tagSelectLabel.htmlFor = 'cf-tag-select'
+  const tagSelect = node('select', '', 'cf-select')
+  tagSelect.id = 'cf-tag-select'
+  const allTagOpt = node('option', `All Tags (${problems.length.toLocaleString()})`)
+  allTagOpt.value = ''
+  tagSelect.append(allTagOpt)
+  for (const t of tags) {
+    const opt = node('option', `${t} (${(tagCounts[t] ?? 0).toLocaleString()})`)
+    opt.value = t
+    tagSelect.append(opt)
+  }
+  tagSelect.value = cfState.tags[0] ?? ''
+  tagSelectGroup.append(tagSelectLabel, tagSelect)
+
+  // 3. Sort By Selector
+  const sortGroup = node('div', '', 'cf-control-group')
+  const sortLabel = node('label', 'Sort Problems By', 'cf-control-label')
+  sortLabel.htmlFor = 'cf-sort-select'
+  const sortSelect = node('select', '', 'cf-select')
+  sortSelect.id = 'cf-sort-select'
+  const sortOptions = [
+    ['rating-asc', 'Rating: Low → High (800 → 3500)'],
+    ['rating-desc', 'Rating: High → Low (3500 → 800)'],
+    ['solved-desc', 'Most Solved First'],
+    ['solved-asc', 'Least Solved First'],
+    ['contest-desc', 'Newest Contests First'],
+    ['contest-asc', 'Oldest / Classic First']
+  ]
+  for (const [val, labelText] of sortOptions) {
+    const opt = node('option', labelText)
+    opt.value = val
+    sortSelect.append(opt)
+  }
+  sortSelect.value = cfState.sort
+  sortGroup.append(sortLabel, sortSelect)
+
+  // 4. Rating Range (Min / Max)
+  const rangeGroup = node('div', '', 'cf-control-group')
+  const rangeLabel = node('label', 'Rating Range (Min – Max)', 'cf-control-label')
+  const rangeRow = node('div', '', 'cf-range-row')
+  const minSelect = node('select', '', 'cf-select')
+  minSelect.id = 'cf-min-rating'
+  minSelect.setAttribute('aria-label', 'Minimum rating')
+  const minAny = node('option', 'Min: Any')
+  minAny.value = '0'
+  minSelect.append(minAny)
+  const maxSelect = node('select', '', 'cf-select')
+  maxSelect.id = 'cf-max-rating'
+  maxSelect.setAttribute('aria-label', 'Maximum rating')
+  const maxAny = node('option', 'Max: Any')
+  maxAny.value = '9999'
+  maxSelect.append(maxAny)
+  for (let r = 800; r <= 3500; r += 100) {
+    const oMin = node('option', `≥ ${r}`)
+    oMin.value = String(r)
+    minSelect.append(oMin)
+    const oMax = node('option', `≤ ${r}`)
+    oMax.value = String(r)
+    maxSelect.append(oMax)
+  }
+  minSelect.value = String(cfState.minRating)
+  maxSelect.value = String(cfState.maxRating)
+  rangeRow.append(minSelect, maxSelect)
+  rangeGroup.append(rangeLabel, rangeRow)
+
+  // 5. Status & Multi-Tag Mode
+  const statusGroup = node('div', '', 'cf-control-group')
+  const statusLabel = node('label', 'Progress & Tag Match', 'cf-control-label')
+  const statusRow = node('div', '', 'cf-range-row')
+  const statusSelect = node('select', '', 'cf-select')
+  statusSelect.id = 'cf-status-select'
+  statusSelect.setAttribute('aria-label', 'Problem status filter')
+  for (const [val, txt] of [['all', 'All Problems'], ['unsolved', 'Unsolved Only'], ['solved', 'Solved Only']]) {
+    const o = node('option', txt)
+    o.value = val
+    statusSelect.append(o)
+  }
+  statusSelect.value = cfState.onlySolved
+  const modeSelect = node('select', '', 'cf-select')
+  modeSelect.id = 'cf-tag-mode'
+  modeSelect.setAttribute('aria-label', 'Multiple tag match mode')
+  for (const [val, txt] of [['all', 'Match ALL Tags'], ['any', 'Match ANY Tag']]) {
+    const o = node('option', txt)
+    o.value = val
+    modeSelect.append(o)
+  }
+  modeSelect.value = cfState.tagMode
+  statusRow.append(statusSelect, modeSelect)
+  statusGroup.append(statusLabel, statusRow)
+
+  controls.append(searchGroup, tagSelectGroup, sortGroup, rangeGroup, statusGroup)
+
+  // Quick Rating Tier Pills
+  const tierBar = node('div', '', 'cf-tier-bar')
+  const tiers = [
+    { label: 'All Rated', min: 0, max: 9999, unrated: false, cls: '' },
+    { label: '800–1100 Newbie', min: 800, max: 1100, unrated: false, cls: 'cf-newbie' },
+    { label: '1200–1300 Pupil', min: 1200, max: 1300, unrated: false, cls: 'cf-pupil' },
+    { label: '1400–1500 Specialist', min: 1400, max: 1500, unrated: false, cls: 'cf-specialist' },
+    { label: '1600–1800 Expert', min: 1600, max: 1800, unrated: false, cls: 'cf-expert' },
+    { label: '1900–2000 CM', min: 1900, max: 2000, unrated: false, cls: 'cf-cm' },
+    { label: '2100–2300 Master', min: 2100, max: 2300, unrated: false, cls: 'cf-master' },
+    { label: '2400+ GM', min: 2400, max: 9999, unrated: false, cls: 'cf-gm' },
+    { label: '+ Include Unrated', min: 0, max: 9999, unrated: true, cls: 'cf-unrated' }
+  ]
+  const tierBtns = tiers.map(tier => {
+    const btn = node('button', tier.label, 'cf-tier-pill ' + tier.cls)
+    btn.type = 'button'
+    btn.onclick = () => {
+      cfState.minRating = tier.min
+      cfState.maxRating = tier.max
+      cfState.includeUnrated = tier.unrated
+      minSelect.value = String(tier.min)
+      maxSelect.value = String(tier.max)
+      cfState.page = 1
+      cfState.spotlight = null
+      refreshTable()
+    }
+    tierBar.append(btn)
+    return { btn, tier }
+  })
+
+  // Interactive Tag Pills Cloud
+  const tagCloudWrap = node('div', '', 'cf-tag-cloud-wrap')
+  const tagCloudHead = node('div', '', 'cf-tag-cloud-head')
+  const tagCloudTitle = node('span', 'FILTER BY TOPIC TAGS (CLICK TO TOGGLE MULTIPLE)', 'cf-control-label')
+  const tagCloudActions = node('div', '', 'cf-tag-cloud-actions')
+  const clearTagsBtn = node('button', 'Clear filters', 'cf-mini-btn')
+  clearTagsBtn.type = 'button'
+  clearTagsBtn.onclick = () => {
+    cfState.tags = []
+    cfState.minRating = 0
+    cfState.maxRating = 9999
+    cfState.includeUnrated = false
+    cfState.search = ''
+    cfState.onlySolved = 'all'
+    cfState.page = 1
+    cfState.spotlight = null
+    searchInput.value = ''
+    tagSelect.value = ''
+    minSelect.value = '0'
+    maxSelect.value = '9999'
+    statusSelect.value = 'all'
+    refreshTable()
+  }
+  const toggleAllTagsBtn = node('button', cfState.showAllTags ? 'Show Top 18 Tags' : `Show All ${tags.length} Tags`, 'cf-mini-btn')
+  toggleAllTagsBtn.type = 'button'
+  const tagCloud = node('div', '', 'cf-tag-cloud')
+
+  function buildTagPills() {
+    tagCloud.replaceChildren()
+    const visibleTags = cfState.showAllTags ? tags : tags.slice(0, 18)
+    for (const t of visibleTags) {
+      const active = cfState.tags.includes(t)
+      const pill = node('button', '', 'cf-tag-pill' + (active ? ' is-active' : ''))
+      pill.type = 'button'
+      pill.setAttribute('aria-pressed', String(active))
+      pill.append(node('span', t, 'cf-tag-name'), node('span', String(tagCounts[t] ?? 0), 'cf-tag-count'))
+      pill.onclick = () => {
+        if (cfState.tags.includes(t)) {
+          cfState.tags = cfState.tags.filter(x => x !== t)
+        } else {
+          cfState.tags = [...cfState.tags, t]
+        }
+        tagSelect.value = cfState.tags[0] ?? ''
+        cfState.page = 1
+        cfState.spotlight = null
+        refreshTable()
+      }
+      tagCloud.append(pill)
+    }
+  }
+  toggleAllTagsBtn.onclick = () => {
+    cfState.showAllTags = !cfState.showAllTags
+    toggleAllTagsBtn.textContent = cfState.showAllTags ? 'Show Top 18 Tags' : `Show All ${tags.length} Tags`
+    buildTagPills()
+  }
+  tagCloudActions.append(toggleAllTagsBtn, clearTagsBtn)
+  tagCloudHead.append(tagCloudTitle, tagCloudActions)
+  tagCloudWrap.append(tagCloudHead, tagCloud)
+
+  const spotlightBox = node('div', '', 'cf-spotlight')
+  spotlightBox.hidden = true
+
+  const tableWrap = node('div', '', 'cf-table-wrap')
+  const pagerWrap = node('div', '', 'cf-pager')
+
+  function refreshTable() {
+    buildTagPills()
+    for (const { btn, tier } of tierBtns) {
+      const active = cfState.minRating === tier.min && cfState.maxRating === tier.max && cfState.includeUnrated === tier.unrated
+      btn.classList.toggle('is-active', active)
+    }
+
+    const filtered = filterAndSortProblems(problems, {
+      tags: cfState.tags,
+      tagMode: cfState.tagMode,
+      minRating: cfState.minRating,
+      maxRating: cfState.maxRating,
+      includeUnrated: cfState.includeUnrated,
+      search: cfState.search,
+      sort: cfState.sort,
+      onlySolved: cfState.onlySolved,
+      solvedIds
+    })
+
+    matchStatVal.textContent = filtered.length.toLocaleString()
+    solvedStatVal.textContent = solvedIds.size.toLocaleString()
+
+    randomBtn.onclick = () => {
+      if (!filtered.length) return
+      const pick = filtered[Math.floor(Math.random() * filtered.length)]
+      cfState.spotlight = pick
+      renderSpotlight()
+    }
+
+    function renderSpotlight() {
+      if (!cfState.spotlight) {
+        spotlightBox.hidden = true
+        return
+      }
+      const p = cfState.spotlight
+      const tier = ratingTier(p.rating)
+      spotlightBox.hidden = false
+      spotlightBox.replaceChildren()
+      const head = node('div', '', 'cf-spotlight-head')
+      head.append(
+        node('span', 'RANDOM TRAINING PICK // ' + p.id, 'quiz-kicker'),
+        node('span', p.rating ? `★ ${p.rating} (${tier.label})` : 'Unrated', 'cf-rating-badge ' + tier.className)
+      )
+      const titleLink = link(`${p.id} — ${p.name} ↗`, p.url, 'cf-spotlight-title')
+      titleLink.target = '_blank'
+      titleLink.rel = 'noopener noreferrer'
+      const tagRow = node('div', '', 'cf-row-tags')
+      for (const t of p.tags) {
+        tagRow.append(node('span', t, 'cf-row-tag'))
+      }
+      spotlightBox.append(head, titleLink, tagRow)
+    }
+    renderSpotlight()
+
+    const totalPages = Math.max(1, Math.ceil(filtered.length / cfState.pageSize))
+    if (cfState.page > totalPages) cfState.page = totalPages
+    const startIdx = (cfState.page - 1) * cfState.pageSize
+    const pageItems = filtered.slice(startIdx, startIdx + cfState.pageSize)
+
+    const table = node('table', '', 'cf-table')
+    const thead = node('thead')
+    const htr = node('tr')
+    for (const h of ['Status', 'ID', 'Problem', 'Topic Tags', 'Rating', 'Solved']) {
+      htr.append(node('th', h))
+    }
+    thead.append(htr)
+
+    const tbody = node('tbody')
+    if (!pageItems.length) {
+      const emptyTr = node('tr')
+      const td = node('td', 'No problems match these filters. Try broadening your rating range or clearing a tag.', 'cf-empty-cell')
+      td.colSpan = 6
+      emptyTr.append(td)
+      tbody.append(emptyTr)
+    } else {
+      for (const p of pageItems) {
+        const isSolved = solvedIds.has(p.id)
+        const tr = node('tr', '', isSolved ? 'is-solved' : '')
+
+        // 1. Solved Toggle
+        const tdStatus = node('td', '', 'cf-td-status')
+        const checkBtn = node('button', isSolved ? '✓' : '○', 'cf-solve-btn' + (isSolved ? ' is-solved' : ''))
+        checkBtn.type = 'button'
+        checkBtn.title = isSolved ? 'Mark as unsolved' : 'Mark as solved'
+        checkBtn.setAttribute('aria-label', (isSolved ? 'Solved ' : 'Mark solved ') + p.id)
+        checkBtn.setAttribute('aria-pressed', String(isSolved))
+        checkBtn.onclick = () => {
+          if (solvedIds.has(p.id)) solvedIds.delete(p.id)
+          else solvedIds.add(p.id)
+          saveSolvedProblems(solvedIds)
+          refreshTable()
+        }
+        tdStatus.append(checkBtn)
+
+        // 2. Problem ID
+        const tdId = node('td', '', 'cf-td-id')
+        const idLink = link(p.id, p.url, 'cf-id-link')
+        idLink.target = '_blank'
+        idLink.rel = 'noopener noreferrer'
+        tdId.append(idLink)
+
+        // 3. Title
+        const tdName = node('td', '', 'cf-td-name')
+        const nameLink = link(p.name + ' ↗', p.url, 'cf-problem-link')
+        nameLink.target = '_blank'
+        nameLink.rel = 'noopener noreferrer'
+        tdName.append(nameLink)
+
+        // 4. Tags
+        const tdTags = node('td', '', 'cf-td-tags')
+        const tagsWrap = node('div', '', 'cf-row-tags')
+        for (const t of p.tags) {
+          const active = cfState.tags.includes(t)
+          const tBtn = node('button', t, 'cf-row-tag' + (active ? ' is-active' : ''))
+          tBtn.type = 'button'
+          tBtn.onclick = () => {
+            if (cfState.tags.includes(t)) cfState.tags = cfState.tags.filter(x => x !== t)
+            else cfState.tags = [...cfState.tags, t]
+            tagSelect.value = cfState.tags[0] ?? ''
+            cfState.page = 1
+            refreshTable()
+          }
+          tagsWrap.append(tBtn)
+        }
+        tdTags.append(tagsWrap)
+
+        // 5. Rating
+        const tdRating = node('td', '', 'cf-td-rating')
+        const tier = ratingTier(p.rating)
+        const rBadge = node('span', p.rating ? `★ ${p.rating}` : 'Unrated', 'cf-rating-badge ' + tier.className)
+        rBadge.title = tier.label
+        tdRating.append(rBadge)
+
+        // 6. Solved Count
+        const tdSolved = node('td', '×' + p.solvedCount.toLocaleString(), 'cf-td-solved')
+
+        tr.append(tdStatus, tdId, tdName, tdTags, tdRating, tdSolved)
+        tbody.append(tr)
+      }
+    }
+    table.append(thead, tbody)
+    tableWrap.replaceChildren(table)
+
+    // Pagination controls
+    pagerWrap.replaceChildren()
+    const prevBtn = node('button', '← Prev Page', 'cf-page-btn')
+    prevBtn.type = 'button'
+    prevBtn.disabled = cfState.page <= 1
+    prevBtn.onclick = () => { cfState.page--; refreshTable(); window.scrollTo(0, 0) }
+    const pageInfo = node('span', `Page ${cfState.page} of ${totalPages} (${filtered.length.toLocaleString()} problems)`, 'cf-page-info')
+    const nextBtn = node('button', 'Next Page →', 'cf-page-btn')
+    nextBtn.type = 'button'
+    nextBtn.disabled = cfState.page >= totalPages
+    nextBtn.onclick = () => { cfState.page++; refreshTable(); window.scrollTo(0, 0) }
+    pagerWrap.append(prevBtn, pageInfo, nextBtn)
+  }
+
+  searchInput.oninput = () => {
+    cfState.search = searchInput.value
+    cfState.page = 1
+    refreshTable()
+  }
+  tagSelect.onchange = () => {
+    cfState.tags = tagSelect.value ? [tagSelect.value] : []
+    cfState.page = 1
+    refreshTable()
+  }
+  sortSelect.onchange = () => {
+    cfState.sort = sortSelect.value
+    cfState.page = 1
+    refreshTable()
+  }
+  minSelect.onchange = () => {
+    cfState.minRating = Number(minSelect.value) || 0
+    cfState.page = 1
+    refreshTable()
+  }
+  maxSelect.onchange = () => {
+    cfState.maxRating = Number(maxSelect.value) || 9999
+    cfState.page = 1
+    refreshTable()
+  }
+  statusSelect.onchange = () => {
+    cfState.onlySolved = statusSelect.value
+    cfState.page = 1
+    refreshTable()
+  }
+  modeSelect.onchange = () => {
+    cfState.tagMode = modeSelect.value
+    cfState.page = 1
+    refreshTable()
+  }
+
+  container.append(topBar, controls, tierBar, tagCloudWrap, spotlightBox, tableWrap, pagerWrap)
+  refreshTable()
+}
+
 function render() {
+  if (isTrainingRoute()) {
+    lastRoute = location.hash
+    renderTraining()
+    return
+  }
   if (lastRoute !== location.hash) {
     const parts = readRoute()
     const prefixed = parts[0] === 'cpp' || parts[0] === 'python'
