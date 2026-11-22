@@ -1,13 +1,22 @@
 import { createServer } from 'node:http'
 import { createReadStream } from 'node:fs'
-import { readFile, readdir, stat } from 'node:fs/promises'
+import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises'
 import { labs } from './labs.mjs'
 import { cppLabs } from './labs-cpp.mjs'
 import { tutorReply } from './tutor.mjs'
 import { judgeSubmission, judgeCppSubmission, runCpp } from './judge.mjs'
-import { scrapeCodeforcesProblems, packProblems } from './codeforces.mjs'
+import {
+  fetchCodeforcesAccount,
+  packProblems,
+  scrapeCodeforcesProblems,
+  sortLeaderboard,
+  upsertLeaderboardEntry,
+  validateHandle
+} from './codeforces.mjs'
 
 const dist = new URL('../dist/', import.meta.url)
+const dataDir = new URL('../data/', import.meta.url)
+const leaderboardFile = new URL('codeforces-leaderboard.json', dataDir)
 const types = {
   html: 'text/html; charset=utf-8', css: 'text/css; charset=utf-8',
   js: 'text/javascript; charset=utf-8', json: 'application/json; charset=utf-8',
@@ -30,12 +39,28 @@ let runBudget = { until: 0, count: 0 }
 let cfCache = null
 let cfLastRefresh = 0
 let cfRefreshPromise = null
+let cfLeaderboard = []
+let cfLinkBudget = { until: 0, count: 0 }
 const cdn = 'https://cdn.jsdelivr.net'
 
 try {
   cfCache = await readFile(new URL('codeforces-problems.json', dist))
   cfLastRefresh = Date.now()
 } catch { /* Will scrape on first request if missing */ }
+
+try {
+  const rawBoard = await readFile(leaderboardFile, 'utf8')
+  cfLeaderboard = sortLeaderboard(JSON.parse(rawBoard))
+} catch {
+  cfLeaderboard = []
+}
+
+async function saveLeaderboard() {
+  try {
+    await mkdir(dataDir, { recursive: true })
+    await writeFile(leaderboardFile, JSON.stringify(cfLeaderboard, null, 2), 'utf8')
+  } catch { /* Non-fatal if read-only fs */ }
+}
 
 async function refreshCodeforcesCache() {
   if (cfRefreshPromise) return cfRefreshPromise
@@ -123,6 +148,43 @@ createServer(async (req, res) => {
       return res.end(cfCache)
     } catch {
       return json(res, 503, { error: 'Could not refresh from Codeforces right now.' })
+    }
+  }
+  if (path === '/api/codeforces/leaderboard' && ['GET', 'HEAD'].includes(req.method)) {
+    return json(res, 200, {
+      entries: sortLeaderboard(cfLeaderboard),
+      totalUsers: cfLeaderboard.length
+    })
+  }
+  if (path === '/api/codeforces/link' && req.method === 'POST') {
+    const why = refused(req)
+    if (why === 'origin') return json(res, 403, { error: 'Link your account from the Training Arena.' })
+    if (why === 'type') return json(res, 415, { error: 'Send a JSON request.' })
+    let body
+    try { body = await readJSON(req, 4_000) } catch { return json(res, 400, { error: 'Invalid request.' }) }
+    const handle = validateHandle(body?.handle)
+    if (!handle) {
+      return json(res, 400, { error: 'Enter a valid Codeforces handle (3–24 characters).' })
+    }
+    const now = Date.now()
+    if (now >= cfLinkBudget.until) cfLinkBudget = { until: now + 60_000, count: 0 }
+    if (cfLinkBudget.count >= 20) {
+      return json(res, 429, { error: 'Too many account sync requests. Try again in a minute.' })
+    }
+    cfLinkBudget.count++
+    try {
+      const profile = await fetchCodeforcesAccount(handle, {
+        apiKey: process.env.CF_API_KEY,
+        apiSecret: process.env.CF_API_SECRET
+      })
+      cfLeaderboard = upsertLeaderboardEntry(cfLeaderboard, profile)
+      await saveLeaderboard()
+      return json(res, 200, {
+        profile,
+        leaderboard: cfLeaderboard
+      })
+    } catch (err) {
+      return json(res, 404, { error: err?.message || `Could not link Codeforces handle "${handle}".` })
     }
   }
   if (path === '/api/submit' && req.method === 'POST') {

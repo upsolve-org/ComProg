@@ -2,12 +2,16 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
   buildSignedUrl,
+  fetchCodeforcesAccount,
   filterAndSortProblems,
   packProblems,
   parseProblemsetHTML,
   ratingTier,
   scrapeCodeforcesProblems,
-  unpackProblems
+  sortLeaderboard,
+  unpackProblems,
+  upsertLeaderboardEntry,
+  validateHandle
 } from './codeforces.mjs'
 
 const sampleProblems = [
@@ -110,4 +114,54 @@ test('buildSignedUrl and parseProblemsetHTML and ratingTier handle edge cases', 
   assert.equal(ratingTier(800).className, 'cf-newbie')
   assert.equal(ratingTier(1500).className, 'cf-specialist')
   assert.equal(ratingTier(2400).className, 'cf-gm')
+})
+
+test('fetchCodeforcesAccount and leaderboard sorting rank users by problems solved', async () => {
+  assert.equal(validateHandle('tourist'), 'tourist')
+  assert.equal(validateHandle('bad handle!'), '')
+
+  const profile = await fetchCodeforcesAccount('tourist', {
+    fetchImpl: async url => {
+      if (url.includes('user.info')) {
+        return {
+          ok: true,
+          json: async () => ({
+            status: 'OK',
+            result: [{ handle: 'tourist', rating: 3800, maxRating: 4009, rank: 'legendary grandmaster', maxRank: 'legendary grandmaster' }]
+          })
+        }
+      }
+      return {
+        ok: true,
+        json: async () => ({
+          status: 'OK',
+          result: [
+            { verdict: 'OK', problem: { contestId: 4, index: 'A', name: 'Watermelon' } },
+            { verdict: 'OK', problem: { contestId: 4, index: 'A', name: 'Watermelon' } },
+            { verdict: 'WRONG_ANSWER', problem: { contestId: 20, index: 'C', name: 'Dijkstra?' } },
+            { verdict: 'OK', problem: { contestId: 455, index: 'A', name: 'Boredom' } }
+          ]
+        })
+      }
+    }
+  })
+
+  assert.equal(profile.handle, 'tourist')
+  assert.equal(profile.rating, 3800)
+  assert.equal(profile.solvedCount, 2)
+  assert.deepEqual(profile.solvedIds, ['4A', '455A'])
+
+  let board = []
+  board = upsertLeaderboardEntry(board, { handle: 'alice', rating: 1600, maxRating: 1650, rank: 'expert', solvedCount: 120 })
+  board = upsertLeaderboardEntry(board, { handle: 'bob', rating: 1400, maxRating: 1450, rank: 'specialist', solvedCount: 340 })
+  board = upsertLeaderboardEntry(board, { handle: 'charlie', rating: 1900, maxRating: 1950, rank: 'candidate master', solvedCount: 340 })
+  board = upsertLeaderboardEntry(board, { handle: 'ALICE', rating: 1700, maxRating: 1700, rank: 'expert', solvedCount: 410 })
+
+  const ranked = sortLeaderboard(board)
+  assert.equal(ranked.length, 3)
+  assert.deepEqual(ranked.map(r => [r.position, r.handle, r.solvedCount]), [
+    [1, 'ALICE', 410],
+    [2, 'charlie', 340],
+    [3, 'bob', 340]
+  ])
 })

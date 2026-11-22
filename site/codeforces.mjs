@@ -242,3 +242,114 @@ export function filterAndSortProblems(problems, {
 
   return filtered
 }
+
+export function validateHandle(raw) {
+  const clean = String(raw ?? '').trim()
+  if (!/^[A-Za-z0-9_.-]{3,24}$/.test(clean)) return ''
+  return clean
+}
+
+export async function fetchCodeforcesAccount(handle, {
+  apiKey = process.env.CF_API_KEY ?? '',
+  apiSecret = process.env.CF_API_SECRET ?? '',
+  fetchImpl = fetch
+} = {}) {
+  const cleanHandle = validateHandle(handle)
+  if (!cleanHandle) {
+    throw new Error('Enter a valid Codeforces handle (3–24 letters, digits, _, ., -).')
+  }
+  const infoUrl = buildSignedUrl('user.info', { handles: cleanHandle }, apiKey, apiSecret)
+  const statusUrl = buildSignedUrl('user.status', { handle: cleanHandle }, apiKey, apiSecret)
+  const headers = {
+    'user-agent': 'ComProg-Training-Scraper/1.0 (+https://comprog.upsolve.study)',
+    accept: 'application/json'
+  }
+  const [infoRes, statusRes] = await Promise.all([
+    fetchImpl(infoUrl, { headers }),
+    fetchImpl(statusUrl, { headers })
+  ])
+
+  const infoPayload = await infoRes.json().catch(() => null)
+  if (!infoRes.ok || infoPayload?.status !== 'OK' || !infoPayload?.result?.[0]) {
+    throw new Error(infoPayload?.comment || `Codeforces user "${cleanHandle}" was not found.`)
+  }
+  const statusPayload = await statusRes.json().catch(() => null)
+  if (!statusRes.ok || statusPayload?.status !== 'OK' || !Array.isArray(statusPayload?.result)) {
+    throw new Error(statusPayload?.comment || `Could not load submissions for "${cleanHandle}".`)
+  }
+
+  const user = infoPayload.result[0]
+  const solvedKeys = new Set()
+  const solvedIds = new Set()
+  for (const sub of statusPayload.result) {
+    if (sub?.verdict !== 'OK' || !sub?.problem) continue
+    const p = sub.problem
+    if (p.contestId && p.index) {
+      const id = `${p.contestId}${p.index}`
+      solvedIds.add(id)
+      solvedKeys.add(id)
+    } else if (p.name) {
+      solvedKeys.add(`name:${p.name}`)
+    }
+  }
+
+  return {
+    handle: String(user.handle || cleanHandle),
+    rating: Number.isFinite(user.rating) ? Number(user.rating) : null,
+    maxRating: Number.isFinite(user.maxRating) ? Number(user.maxRating) : null,
+    rank: user.rank ? String(user.rank) : 'unrated',
+    maxRank: user.maxRank ? String(user.maxRank) : 'unrated',
+    avatar: user.titlePhoto || user.avatar || '',
+    solvedCount: solvedKeys.size,
+    solvedIds: Array.from(solvedIds),
+    updatedAt: new Date().toISOString()
+  }
+}
+
+export function sortLeaderboard(entries) {
+  const list = Array.isArray(entries) ? [...entries] : []
+  list.sort((a, b) => {
+    const sa = Number(a.solvedCount) || 0
+    const sb = Number(b.solvedCount) || 0
+    if (sb !== sa) return sb - sa
+    const ra = Number.isFinite(a.rating) ? a.rating : -1
+    const rb = Number.isFinite(b.rating) ? b.rating : -1
+    if (rb !== ra) return rb - ra
+    const ma = Number.isFinite(a.maxRating) ? a.maxRating : -1
+    const mb = Number.isFinite(b.maxRating) ? b.maxRating : -1
+    if (mb !== ma) return mb - ma
+    return String(a.handle ?? '').localeCompare(String(b.handle ?? ''))
+  })
+  return list.map((item, idx) => ({
+    position: idx + 1,
+    handle: item.handle,
+    rating: item.rating ?? null,
+    maxRating: item.maxRating ?? null,
+    rank: item.rank ?? 'unrated',
+    maxRank: item.maxRank ?? 'unrated',
+    avatar: item.avatar ?? '',
+    solvedCount: Number(item.solvedCount) || 0,
+    updatedAt: item.updatedAt ?? null
+  }))
+}
+
+export function upsertLeaderboardEntry(entries, profile) {
+  const map = new Map()
+  for (const item of Array.isArray(entries) ? entries : []) {
+    if (item?.handle) map.set(String(item.handle).toLowerCase(), item)
+  }
+  const key = String(profile.handle).toLowerCase()
+  const existing = map.get(key)
+  map.set(key, {
+    handle: profile.handle,
+    rating: profile.rating ?? null,
+    maxRating: profile.maxRating ?? null,
+    rank: profile.rank ?? 'unrated',
+    maxRank: profile.maxRank ?? 'unrated',
+    avatar: profile.avatar ?? '',
+    solvedCount: Number(profile.solvedCount) || 0,
+    firstLinkedAt: existing?.firstLinkedAt ?? profile.updatedAt ?? new Date().toISOString(),
+    updatedAt: profile.updatedAt ?? new Date().toISOString()
+  })
+  return sortLeaderboard(Array.from(map.values()))
+}

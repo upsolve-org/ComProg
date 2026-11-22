@@ -202,6 +202,7 @@ let activeVisualizers = []
 let lastRoute
 let cfDataset = null
 let cfLoading = false
+let cfLeaderboardData = null
 const cfState = {
   tags: [],
   tagMode: 'all',
@@ -212,6 +213,7 @@ const cfState = {
   sort: 'rating-asc',
   onlySolved: 'all',
   showAllTags: false,
+  showLeaderboard: true,
   page: 1,
   pageSize: 50,
   spotlight: null
@@ -230,6 +232,53 @@ function saveSolvedProblems(set) {
   try {
     localStorage.setItem('comprog:cf:solved', JSON.stringify(Array.from(set)))
   } catch { /* Storage is optional */ }
+}
+
+function getLinkedAccount() {
+  try {
+    const raw = localStorage.getItem('comprog:cf:account')
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+function saveLinkedAccount(profile) {
+  try {
+    if (!profile) localStorage.removeItem('comprog:cf:account')
+    else localStorage.setItem('comprog:cf:account', JSON.stringify(profile))
+  } catch { /* Storage is optional */ }
+}
+
+async function fetchLeaderboard() {
+  try {
+    const res = await fetch('/api/codeforces/leaderboard')
+    if (!res.ok) return cfLeaderboardData ?? []
+    const data = await res.json()
+    cfLeaderboardData = Array.isArray(data?.entries) ? data.entries : []
+    return cfLeaderboardData
+  } catch {
+    return cfLeaderboardData ?? []
+  }
+}
+
+async function linkCodeforcesHandle(handle) {
+  const res = await fetch('/api/codeforces/link', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ handle })
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok || !data?.profile) {
+    throw new Error(data?.error || 'Could not link Codeforces account.')
+  }
+  const solved = getSolvedProblems()
+  for (const id of data.profile.solvedIds ?? []) solved.add(id)
+  saveSolvedProblems(solved)
+  const { solvedIds: _omit, ...summaryProfile } = data.profile
+  saveLinkedAccount(summaryProfile)
+  if (Array.isArray(data.leaderboard)) cfLeaderboardData = data.leaderboard
+  return data
 }
 
 async function loadCodeforcesData(forceRefresh = false) {
@@ -501,6 +550,191 @@ function renderTraining() {
   }
   actionBtns.append(randomBtn, syncBtn)
   topBar.append(statsRow, actionBtns)
+
+  // Codeforces Account Linking & Leaderboard Panel
+  const accountAndBoard = node('div', '', 'cf-social-grid')
+
+  // 1. Account Link Card
+  const accountCard = node('section', '', 'cf-account-card')
+  accountCard.setAttribute('aria-label', 'Link Codeforces Account')
+  const linked = getLinkedAccount()
+
+  function renderAccountCard(errorMsg = '') {
+    accountCard.replaceChildren()
+    const currentLinked = getLinkedAccount()
+    const head = node('div', '', 'cf-section-head')
+    head.append(
+      node('span', 'CODEFORCES ACCOUNT // AUTO-SYNC SOLVED PROBLEMS', 'cf-control-label'),
+      node('span', currentLinked ? 'LINKED ✓' : 'NOT LINKED', 'cf-status-pill' + (currentLinked ? ' is-linked' : ''))
+    )
+    accountCard.append(head)
+
+    if (currentLinked) {
+      const profileRow = node('div', '', 'cf-linked-profile')
+      const tier = ratingTier(currentLinked.rating)
+      const handleWrap = node('div', '', 'cf-linked-main')
+      const hLink = link(currentLinked.handle + ' ↗', 'https://codeforces.com/profile/' + encodeURIComponent(currentLinked.handle), 'cf-linked-handle')
+      hLink.target = '_blank'
+      hLink.rel = 'noopener noreferrer'
+      const rBadge = node('span', currentLinked.rating ? `★ ${currentLinked.rating} · ${tier.label}` : 'Unrated', 'cf-rating-badge ' + tier.className)
+      const solvedBadge = node('span', `${(currentLinked.solvedCount ?? solvedIds.size).toLocaleString()} Solved on CF`, 'cf-solved-pill')
+      handleWrap.append(hLink, rBadge, solvedBadge)
+
+      const btnRow = node('div', '', 'cf-linked-actions')
+      const resyncBtn = node('button', 'Sync Handle ↻', 'cf-mini-btn')
+      resyncBtn.type = 'button'
+      resyncBtn.onclick = async () => {
+        resyncBtn.disabled = true
+        resyncBtn.textContent = 'Syncing…'
+        try {
+          await linkCodeforcesHandle(currentLinked.handle)
+          renderTraining()
+        } catch (err) {
+          renderAccountCard(err.message || 'Sync failed.')
+        }
+      }
+      const unlinkBtn = node('button', 'Unlink', 'cf-mini-btn')
+      unlinkBtn.type = 'button'
+      unlinkBtn.onclick = () => {
+        saveLinkedAccount(null)
+        renderAccountCard()
+        renderLeaderboardCard()
+      }
+      btnRow.append(resyncBtn, unlinkBtn)
+      profileRow.append(handleWrap, btnRow)
+      accountCard.append(profileRow)
+    } else {
+      const desc = node('p', 'Link your Codeforces handle to import all your accepted (OK) problems and join the ComProgSolved Leaderboard.', 'cf-account-desc')
+      const form = node('form', '', 'cf-link-form')
+      const input = node('input', '', 'cf-input')
+      input.id = 'cf-handle-input'
+      input.type = 'text'
+      input.required = true
+      input.maxLength = 24
+      input.placeholder = 'Codeforces handle (e.g. tourist)'
+      input.setAttribute('aria-label', 'Codeforces handle')
+      const submitBtn = node('button', 'Link Account', 'primary cf-link-btn')
+      submitBtn.type = 'submit'
+      form.append(input, submitBtn)
+      form.onsubmit = async event => {
+        event.preventDefault()
+        const handle = input.value.trim()
+        if (!handle) return
+        submitBtn.disabled = true
+        submitBtn.textContent = 'Linking…'
+        try {
+          await linkCodeforcesHandle(handle)
+          renderTraining()
+        } catch (err) {
+          renderAccountCard(err.message || 'Could not link handle.')
+        }
+      }
+      accountCard.append(desc, form)
+    }
+    if (errorMsg) {
+      accountCard.append(node('p', errorMsg, 'cf-account-error'))
+    }
+  }
+
+  // 2. Leaderboard Card (Sorted by Problems Solved)
+  const leaderboardCard = node('section', '', 'cf-leaderboard-card')
+  leaderboardCard.setAttribute('aria-label', 'Codeforces Solved Problems Leaderboard')
+
+  function renderLeaderboardCard() {
+    leaderboardCard.replaceChildren()
+    const entries = cfLeaderboardData ?? []
+    const currentLinked = getLinkedAccount()
+
+    const head = node('div', '', 'cf-section-head')
+    const titleSpan = node('span', `🏆 LEADERBOARD // SORTED BY PROBLEMS SOLVED (${entries.length})`, 'cf-control-label')
+    const headActions = node('div', '', 'cf-tag-cloud-actions')
+    const refreshLbBtn = node('button', 'Refresh ↻', 'cf-mini-btn')
+    refreshLbBtn.type = 'button'
+    refreshLbBtn.onclick = async () => {
+      refreshLbBtn.disabled = true
+      refreshLbBtn.textContent = 'Loading…'
+      await fetchLeaderboard()
+      renderLeaderboardCard()
+    }
+    const toggleLbBtn = node('button', cfState.showLeaderboard ? 'Hide' : 'Show', 'cf-mini-btn')
+    toggleLbBtn.type = 'button'
+    toggleLbBtn.onclick = () => {
+      cfState.showLeaderboard = !cfState.showLeaderboard
+      renderLeaderboardCard()
+    }
+    headActions.append(refreshLbBtn, toggleLbBtn)
+    head.append(titleSpan, headActions)
+    leaderboardCard.append(head)
+
+    if (!cfState.showLeaderboard) return
+
+    if (!entries.length) {
+      leaderboardCard.append(node('p', 'No Codeforces accounts linked yet. Link your handle above to claim #1 on the leaderboard!', 'cf-leaderboard-empty'))
+      return
+    }
+
+    const topSolved = Math.max(1, ...entries.map(e => Number(e.solvedCount) || 0))
+    const lbWrap = node('div', '', 'cf-leaderboard-table-wrap')
+    const lbTable = node('table', '', 'cf-table cf-leaderboard-table')
+    const thead = node('thead')
+    const htr = node('tr')
+    for (const col of ['Rank', 'Coder Handle', 'Rating & Tier', 'Max Rating', 'Problems Solved']) {
+      htr.append(node('th', col))
+    }
+    thead.append(htr)
+
+    const tbody = node('tbody')
+    for (const entry of entries) {
+      const isMe = currentLinked && String(currentLinked.handle).toLowerCase() === String(entry.handle).toLowerCase()
+      const tr = node('tr', '', isMe ? 'is-me' : '')
+
+      const medal = entry.position === 1 ? '🥇 ' : entry.position === 2 ? '🥈 ' : entry.position === 3 ? '🥉 ' : ''
+      const tdRank = node('td', `${medal}#${entry.position}`, 'cf-lb-rank')
+
+      const tdHandle = node('td', '', 'cf-lb-handle-cell')
+      const hLink = link(entry.handle + ' ↗', 'https://codeforces.com/profile/' + encodeURIComponent(entry.handle), 'cf-problem-link')
+      hLink.target = '_blank'
+      hLink.rel = 'noopener noreferrer'
+      tdHandle.append(hLink)
+      if (isMe) tdHandle.append(node('span', 'YOU', 'cf-you-badge'))
+
+      const tier = ratingTier(entry.rating)
+      const tdRating = node('td')
+      tdRating.append(node('span', entry.rating ? `★ ${entry.rating} · ${tier.label}` : 'Unrated', 'cf-rating-badge ' + tier.className))
+
+      const tdMax = node('td', entry.maxRating ? `★ ${entry.maxRating}` : '—', 'cf-td-solved')
+
+      const tdSolved = node('td', '', 'cf-lb-solved-cell')
+      const solvedRow = node('div', '', 'cf-lb-solved-row')
+      const solvedNum = node('strong', `${(entry.solvedCount ?? 0).toLocaleString()} solved`, 'cf-lb-solved-num')
+      const barTrack = node('div', '', 'cf-lb-bar-track')
+      const barFill = node('div', '', 'cf-lb-bar-fill')
+      const pct = Math.max(4, Math.round(((Number(entry.solvedCount) || 0) / topSolved) * 100))
+      barFill.style.width = `${pct}%`
+      barTrack.append(barFill)
+      solvedRow.append(solvedNum, barTrack)
+      tdSolved.append(solvedRow)
+
+      tr.append(tdRank, tdHandle, tdRating, tdMax, tdSolved)
+      tbody.append(tr)
+    }
+    lbTable.append(thead, tbody)
+    lbWrap.append(lbTable)
+    leaderboardCard.append(lbWrap)
+  }
+
+  renderAccountCard()
+  renderLeaderboardCard()
+  accountAndBoard.append(accountCard, leaderboardCard)
+  if (cfLeaderboardData === null) {
+    fetchLeaderboard().then(() => {
+      if (isTrainingRoute()) renderLeaderboardCard()
+    })
+  }
+  if (linked && !linked.syncedThisSession) {
+    linked.syncedThisSession = true
+    saveLinkedAccount(linked)
+  }
 
   // Controls Deck: Search, Tag Dropdown, Sort by Rating, Min/Max Rating, Status
   const controls = node('div', '', 'cf-controls-grid')
@@ -899,7 +1133,7 @@ function renderTraining() {
     refreshTable()
   }
 
-  container.append(topBar, controls, tierBar, tagCloudWrap, spotlightBox, tableWrap, pagerWrap)
+  container.append(topBar, accountAndBoard, controls, tierBar, tagCloudWrap, spotlightBox, tableWrap, pagerWrap)
   refreshTable()
 }
 

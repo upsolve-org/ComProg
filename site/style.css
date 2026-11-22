@@ -2190,3 +2190,172 @@ textarea {
   border-color: var(--surface-panel-ink);
 }
 
+/* Codeforces Account Link & Leaderboard */
+.cf-social-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+}
+
+.cf-account-card,
+.cf-leaderboard-card {
+  background: var(--surface-panel-card);
+  border: 1px solid var(--surface-panel-line);
+  padding: 0.9rem 1.05rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.cf-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.cf-status-pill {
+  font-family: var(--hpv2-font-meta);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.18rem 0.55rem;
+  border: 1px solid var(--surface-panel-line);
+  color: var(--surface-panel-muted);
+  background: var(--surface-panel-bg);
+}
+
+.cf-status-pill.is-linked {
+  color: var(--brand-green);
+  border-color: var(--brand-green);
+  background: var(--brand-green-soft);
+}
+
+.cf-account-desc,
+.cf-leaderboard-empty {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--surface-panel-muted);
+}
+
+.cf-link-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.cf-link-form .cf-input {
+  flex: 1 1 15rem;
+}
+
+.cf-linked-profile {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.cf-linked-main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.cf-linked-handle {
+  font-family: var(--hpv2-font-meta);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--surface-panel-ink);
+  text-decoration: none;
+}
+
+.cf-linked-handle:hover {
+  color: var(--brand-green);
+  text-decoration: underline;
+}
+
+.cf-solved-pill {
+  font-family: var(--hpv2-font-meta);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.22rem 0.6rem;
+  background: var(--brand-green-soft);
+  border: 1px solid var(--brand-green);
+  color: var(--brand-green);
+}
+
+.cf-linked-actions {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.cf-account-error {
+  margin: 0;
+  font-family: var(--hpv2-font-meta);
+  font-size: 0.78rem;
+  color: var(--brand-red);
+}
+
+.cf-leaderboard-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.reading .cf-leaderboard-table tr.is-me {
+  background: rgba(21, 122, 26, 0.1);
+}
+
+.cf-lb-rank {
+  font-family: var(--hpv2-font-meta);
+  font-weight: 700;
+  font-size: 0.84rem;
+  white-space: nowrap;
+}
+
+.cf-lb-handle-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.cf-you-badge {
+  font-family: var(--hpv2-font-meta);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.1rem 0.4rem;
+  background: var(--brand-green);
+  color: #ffffff;
+}
+
+.cf-lb-solved-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 11rem;
+}
+
+.cf-lb-solved-num {
+  font-family: var(--hpv2-font-meta);
+  font-size: 0.82rem;
+  white-space: nowrap;
+  min-width: 5.5rem;
+}
+
+.cf-lb-bar-track {
+  flex: 1 1 5rem;
+  height: 0.42rem;
+  background: var(--surface-panel-well);
+  border: 1px solid var(--surface-panel-solid-line);
+  overflow: hidden;
+}
+
+.cf-lb-bar-fill {
+  height: 100%;
+  background: var(--brand-green);
+}
+
