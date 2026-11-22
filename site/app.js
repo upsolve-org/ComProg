@@ -369,12 +369,31 @@ function renderProgress() {
   $('progress').max = practice.length
   $('progress').value = count
   $('progress-label').textContent = count + ' of ' + practice.length + ' accepted'
+  const onTraining = isTrainingRoute()
+  for (const button of document.querySelectorAll('.course-switch button')) {
+    const active = !onTraining && button.dataset.course === courseKey
+    button.setAttribute('aria-pressed', String(active))
+  }
+  const trainNavBtn = $('training-nav')
+  if (trainNavBtn) {
+    trainNavBtn.classList.toggle('is-active', onTraining)
+    if (onTraining) trainNavBtn.setAttribute('aria-current', 'page')
+    else trainNavBtn.removeAttribute('aria-current')
+  }
+  const shell = $qs('.shell')
+  if (shell) shell.classList.toggle('is-training-page', onTraining)
+  outline.hidden = onTraining
+  const progressWrap = $qs('.progress')
+  if (progressWrap) progressWrap.hidden = onTraining
+  $qs('.course-name').textContent = onTraining
+    ? 'Codeforces Problemset Arena'
+    : (courseKey === 'cpp' ? 'Competitive programming in C++20' : 'Competitive programming in Python')
+
   const nav = $('outline')
-  $qs('.course-name').textContent = courseKey === 'cpp'
-    ? 'Competitive programming in C++20' : 'Competitive programming in Python'
-  if (!nav.children.length) {
-    const trainLink = link('⚡ Codeforces Training Arena', '#training', 'sidebar-training-link')
-    nav.append(trainLink)
+  if (!nav.children.length || nav.dataset.course !== courseKey) {
+    nav.replaceChildren()
+    nav.dataset.course = courseKey
+    delete nav.dataset.chapter
     for (const item of course) {
       const group = node('details', '', 'chapter-group')
       group.append(node('summary', item.title))
@@ -384,20 +403,8 @@ function renderProgress() {
       nav.append(group)
     }
   }
-  const onTraining = isTrainingRoute()
-  const trainNavBtn = $('training-nav')
-  if (trainNavBtn) {
-    trainNavBtn.classList.toggle('is-active', onTraining)
-    if (onTraining) trainNavBtn.setAttribute('aria-current', 'page')
-    else trainNavBtn.removeAttribute('aria-current')
-  }
-  const sidebarTrain = nav.querySelector('.sidebar-training-link')
-  if (sidebarTrain) {
-    sidebarTrain.classList.toggle('current', onTraining)
-    if (onTraining) sidebarTrain.setAttribute('aria-current', 'page')
-    else sidebarTrain.removeAttribute('aria-current')
-  }
-  const route = onTraining ? '#training' : lessonURL(lesson.id, storage.get('step:' + lesson.id) || firstStep(lesson))
+  if (onTraining) return
+  const route = lessonURL(lesson.id, storage.get('step:' + lesson.id) || firstStep(lesson))
   for (const [index, group] of Array.from(nav.querySelectorAll('.chapter-group')).entries()) {
     const item = course[index]
     if (item === lesson && nav.dataset.chapter !== item.id) group.open = true
@@ -975,7 +982,7 @@ function render() {
   $('layout').classList.toggle('is-full-width', !showEditor)
   reading.classList.toggle('is-video', isVideo)
   reading.classList.toggle('is-quiz', isQuizTab)
-  reading.classList.remove('panel-enter')
+  reading.classList.remove('is-training', 'panel-enter')
   void reading.offsetWidth
   reading.classList.add('panel-enter')
   reading.replaceChildren()
@@ -1312,8 +1319,24 @@ $('ask').addEventListener('submit', async event => {
     }
   }
 })
-window.addEventListener('hashchange', () => {
+const courses = {}
+async function ensureCourse(key) {
+  if (!courses[key]) {
+    const response = await fetch(key === 'cpp' ? '/course-cpp.json' : '/course.json')
+    if (!response.ok) throw new Error('Course unavailable')
+    courses[key] = await response.json()
+  }
+  courseKey = key
+  course = courses[key]
+  storage.remember(courseKey)
+}
+
+window.addEventListener('hashchange', async () => {
   if (!course || location.hash === '#main') return
+  const requested = /^#(cpp|python)\//.exec(location.hash)?.[1]
+  if (requested && requested !== courseKey) {
+    await ensureCourse(requested)
+  }
   render()
   if (matches.matches) document.querySelector('.sidebar').open = false
   $('main').focus({ preventScroll: true })
@@ -1321,23 +1344,26 @@ window.addEventListener('hashchange', () => {
 })
 try {
   const requested = /^#(cpp|python)\//.exec(location.hash)?.[1]
-  courseKey = requested ?? (storage.shared('course') === 'cpp' ? 'cpp' : 'python')
-  storage.remember(courseKey)
-  const response = await fetch(courseFile())
-  if (!response.ok) throw new Error('Course unavailable')
-  course = await response.json()
+  const initialKey = requested ?? (storage.shared('course') === 'cpp' ? 'cpp' : 'python')
+  await ensureCourse(initialKey)
   for (const button of document.querySelectorAll('.course-switch button')) {
     const mine = button.dataset.course
-    button.setAttribute('aria-pressed', String(mine === courseKey))
+    button.setAttribute('aria-pressed', String(!isTrainingRoute() && mine === courseKey))
     button.setAttribute('aria-label', 'Study the ' + (mine === 'cpp' ? 'C++20' : 'Python') + ' course')
-    // Keep the reader on the same chapter and step in the other language.
-    button.onclick = () => {
-      if (mine === courseKey) return
-      const step = lesson && location.hash.split('/').at(-1)
-      const target = lesson?.lab && ['practice', 'quiz'].includes(step)
-        ? otherLessonURL(lesson.id, step)
-        : '#' + mine + '/' + (lesson?.id ?? course[0].id) + '/' + firstStep(lesson ?? course[0])
-      window.location.hash = target
+    // Keep the reader on the same chapter and step in the other language, or exit training back to the course.
+    button.onclick = async () => {
+      const onTrain = isTrainingRoute()
+      if (mine === courseKey && !onTrain) return
+      await ensureCourse(mine)
+      const currentId = lesson?.id
+      const targetChapter = course.find(item => item.id === currentId) ?? course[0]
+      const step = !onTrain && lesson && location.hash.split('/').at(-1)
+      const targetStep = (!onTrain && targetChapter?.lab && ['practice', 'quiz'].includes(step))
+        ? step
+        : firstStep(targetChapter)
+      const target = '#' + mine + '/' + targetChapter.id + '/' + targetStep
+      if (window.location.hash === target) render()
+      else window.location.hash = target
       window.scrollTo(0, 0)
       $('main').focus({ preventScroll: true })
     }

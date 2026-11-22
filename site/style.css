@@ -206,9 +206,10 @@ button.primary:hover {
   border-left: 1px solid var(--hermes-stroke);
 }
 
-/* Course switcher — two segmented pills in the masthead */
+/* Course switcher — segmented pills in the masthead */
 .course-switch {
   display: inline-flex;
+  align-items: center;
   gap: 0.2rem;
   padding: 0.2rem;
   background: var(--hermes-primary);
@@ -216,29 +217,38 @@ button.primary:hover {
   border-radius: 999px;
 }
 
-.course-switch button {
+.course-switch button,
+.course-switch .training-nav-btn {
+  min-height: 0;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.32rem 0.7rem;
+  padding: 0.34rem 0.75rem;
   border: 1px solid transparent;
   border-radius: 999px;
   background: transparent;
   color: var(--quiet);
   font-family: var(--hpv2-font-meta);
   font-size: 0.74rem;
+  font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  text-decoration: none;
   cursor: pointer;
   transition: color 0.16s var(--ease-out), background-color 0.16s var(--ease-out), border-color 0.16s var(--ease-out);
 }
 
-.course-switch button:hover {
+.course-switch button:hover,
+.course-switch .training-nav-btn:hover {
   color: var(--hermes-white);
   border-color: var(--hermes-stroke);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: none;
+  transform: none;
 }
 
-.course-switch button[aria-pressed='true'] {
+.course-switch button[aria-pressed='true'],
+.course-switch .training-nav-btn.is-active {
   background: var(--brand-green);
   border-color: var(--brand-green-bright);
   color: #ffffff;
@@ -289,6 +299,11 @@ progress::-webkit-progress-value {
   max-width: 112rem;
   margin: auto;
   transition: grid-template-columns 0.26s var(--nw-ease-arrival);
+}
+
+.shell.is-training-page,
+.shell.is-training-page:has(.sidebar:not([open])) {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .sidebar {
@@ -1790,54 +1805,6 @@ textarea {
 /* =====================================================================
    Codeforces Training Arena — UPsolve Hermes Theme
    ===================================================================== */
-.training-nav-btn {
-  min-height: 34px;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-family: var(--hpv2-font-meta);
-  font-size: 0.74rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0.35rem 0.75rem;
-  color: var(--hermes-white);
-  background: #232326;
-  border: 1px solid var(--hermes-stroke);
-  text-decoration: none;
-  transition: background-color 0.15s var(--ease-out), border-color 0.15s var(--ease-out), color 0.15s var(--ease-out);
-}
-
-.training-nav-btn:hover,
-.training-nav-btn.is-active {
-  background: var(--brand-green);
-  border-color: var(--brand-green-bright);
-  color: #ffffff;
-}
-
-.sidebar-training-link {
-  display: block;
-  font-family: var(--hpv2-font-meta);
-  font-size: 0.76rem;
-  font-weight: 600;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  padding: 0.55rem 0.65rem;
-  margin-bottom: 0.45rem;
-  background: var(--hermes-dark-well);
-  border: 1px solid var(--hermes-stroke);
-  border-left: 3px solid var(--brand-green-bright);
-  color: var(--hermes-white);
-  text-decoration: none;
-}
-
-.sidebar-training-link:hover,
-.sidebar-training-link.current {
-  background: var(--pale);
-  color: var(--brand-green-bright);
-  border-color: var(--brand-green-bright);
-}
-
 .cf-arena {
   display: grid;
   gap: 1.15rem;
