@@ -35,6 +35,38 @@ This module covers specialized, higher-tier contest techniques frequently seen i
 - **Mo's Algorithm:** Offline algorithm to answer $Q$ range queries on an array in $O((N + Q)\sqrt{N})$ time.
   - Sorts queries by block of left endpoint, then right endpoint (Hilbert order or alternating left-right).
 
+### Worked Example: Binary Search on Time
+A piece that takes `e` cycles is done by minute `t` exactly `t // e` times, and there are only 3 real pieces, so each detector stops counting after 3. With detectives of speed 4 and 6 minutes per piece, the claim "two pieces are done by minute `t`" flips once and stays true:
+
+```python
+import bisect
+
+agents = [4, 6]
+evidence = [5, 3]
+b = len(agents)
+
+
+def pieces_done(t):
+    return sum(min(t // evidence[i % len(evidence)], len(evidence)) for _ in agents for i in range(len(evidence)))
+
+
+def finish():
+    lo, hi = 0, 100
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if pieces_done(mid) >= b:              # feasible: binary search left
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+
+print(finish(), pieces_done(2), pieces_done(3))   # 3 0 2
+print(bisect.bisect_left(range(100), True, key=lambda t: pieces_done(t) >= b))
+```
+
+`pieces_done` is monotone in `t` (nothing later drops below 2, then 4, and so on). One `mid` per halving of the 100-minute range finishes the job in 7 probes, and `bisect` answers the same 3 without the hand-written loop.
+
 ---
 
 ## 🎮 3. Game Theory & Nim
@@ -44,6 +76,22 @@ This module covers specialized, higher-tier contest techniques frequently seen i
 - **Bouton's Theorem for Nim:**
   - A position with pile sizes $(x_1, x_2, \dots, x_k)$ is a winning position if and only if the **XOR sum** is non-zero:
     $$x_1 \oplus x_2 \oplus \dots \oplus x_k \ne 0$$
+
+Piles `2 3 5` XOR to `0b010 ^ 0b011 ^ 0b101 = 0b100 = 4`, so column 3 has an odd number of set bits (`1, 2, 2`) and the first player wins. The reply `p ^ x` makes every column even:
+
+```python
+piles = [2, 3, 5]
+x = 0
+for p in piles:
+    x ^= p
+print(x, x != 0)                         # 4 True
+
+reply = [p ^ x for p in piles]
+print(reply)                             # [6, 7, 1]: reducing pile 5 to 1 zeroes the XOR
+print([p - r for p, r in zip(piles, reply) if r <= p])   # [4]: take 4 from pile 5
+```
+
+Check the reply: `2 ^ 3 ^ 1 = 0`. With piles `3 3 5 5` the XOR is `0` before any move, so the second player wins by mirroring every move: the two odd columns `0` and `2` already balance.
 - **Sprague-Grundy Theorem:**
   - Any composite impartial game decomposes into independent games whose values equal their **Grundy value (mex of reachable states)**.
 

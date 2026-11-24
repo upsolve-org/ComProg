@@ -9,29 +9,29 @@ The expression i bitwise-and negative i isolates the largest power of two dividi
 00:00:15.184 --> 00:00:19.600
 Each slot stores the sum of a block of that exact length.
 
-00:00:19.933 --> 00:00:27.933
+00:00:19.875 --> 00:00:27.875
 To compute a prefix sum up to index i, add the current slot and strip its lowest set bit repeatedly until reaching zero.
 
-00:00:27.933 --> 00:00:34.067
+00:00:27.875 --> 00:00:34.008
 Because an integer has at most log N set bits, the loop finishes in a handful of iterations.
 
-00:00:34.067 --> 00:00:37.533
+00:00:34.008 --> 00:00:37.475
 Range sums follow by subtracting two prefix queries.
 
-00:00:37.833 --> 00:00:47.018
+00:00:37.750 --> 00:00:46.935
 When element i changes by delta, add the lowest set bit to i at each step to visit every block covering that position.
 
-00:00:47.018 --> 00:00:53.167
+00:00:46.935 --> 00:00:53.084
 A flat array and simple bit arithmetic keep the constant factor tiny in Python.
 
-00:00:53.167 --> 00:00:57.993
+00:00:53.084 --> 00:00:57.910
 Point updates and prefix queries both run in logarithmic time.
 
-00:00:58.300 --> 00:01:05.061
+00:00:58.167 --> 00:01:04.927
 Fenwick trees excel at counting inversions or dynamic order statistics during a left-to-right sweep.
 
-00:01:05.061 --> 00:01:12.633
+00:01:04.927 --> 00:01:12.499
 Query how many previously seen values exceed the current element, then insert the current element into the tree.
 
-00:01:12.633 --> 00:01:16.351
+00:01:12.499 --> 00:01:16.218
 Each step takes logarithmic time over compressed ranks.

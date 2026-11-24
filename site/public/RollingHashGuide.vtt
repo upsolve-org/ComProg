@@ -9,29 +9,29 @@ Precomputing prefix hashes and base powers in linear time lets you fingerprint t
 00:00:14.083 --> 00:00:21.400
 Choose a base larger than the alphabet size and a modulus near ten to the ninth or two to the sixty-first.
 
-00:00:21.700 --> 00:00:29.798
+00:00:21.667 --> 00:00:29.765
 Subtracting the scaled left prefix hash from the right prefix hash isolates the exact polynomial of substring L to R.
 
-00:00:29.798 --> 00:00:37.135
+00:00:29.765 --> 00:00:37.102
 Two arbitrary substrings of length one hundred thousand can now be compared for equality in constant time.
 
-00:00:37.135 --> 00:00:41.980
+00:00:37.102 --> 00:00:41.947
 Sliding window hashes and Rabin-Karp pattern searches follow directly.
 
-00:00:42.300 --> 00:00:50.078
+00:00:42.208 --> 00:00:49.987
 By the birthday paradox, a single thirty-two-bit modulus will collide once you compare around forty thousand substrings.
 
-00:00:50.078 --> 00:00:57.727
+00:00:49.987 --> 00:00:57.635
 Pair two independent moduli or randomize the base at startup so prewritten hack tests cannot predict your hash values.
 
-00:00:57.727 --> 00:01:01.940
+00:00:57.635 --> 00:01:01.848
 Double hashing drops the collision probability to virtually zero.
 
-00:01:02.267 --> 00:01:09.562
+00:01:02.125 --> 00:01:09.420
 Because two strings with a common prefix share identical hashes on every shorter prefix, LCP is monotonic in length.
 
-00:01:09.562 --> 00:01:17.737
+00:01:09.420 --> 00:01:17.596
 Binary searching the match length with O(1) hash checks finds the first differing character between two suffixes in O(log N) time.
 
-00:01:17.737 --> 00:01:24.278
+00:01:17.596 --> 00:01:24.136
 You can also binary search the longest palindromic substring by hashing both the string and its reverse.

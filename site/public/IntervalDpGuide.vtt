@@ -9,29 +9,29 @@ Because wide intervals depend on narrower ones, the outer loop must iterate over
 00:00:15.167 --> 00:00:20.200
 Fixing length and left endpoint determines the right endpoint immediately.
 
-00:00:20.500 --> 00:00:27.398
+00:00:20.458 --> 00:00:27.356
 To evaluate interval L to R, iterate a split point k across all positions between L and R.
 
-00:00:27.398 --> 00:00:35.982
+00:00:27.356 --> 00:00:35.940
 Combine the optimal solutions for the left sub-interval and right sub-interval plus the cost of the final merge.
 
-00:00:35.982 --> 00:00:42.420
+00:00:35.940 --> 00:00:42.378
 Three nested loops yield a cubic O(N cubed) runtime suited for N up to four hundred.
 
-00:00:42.733 --> 00:00:50.148
+00:00:42.667 --> 00:00:50.081
 In palindrome and bracket deletion problems, check whether the outer characters at L and R can pair together.
 
-00:00:50.148 --> 00:00:56.746
+00:00:50.081 --> 00:00:56.680
 Matching endpoints let you transition directly from the inner interval L plus one to R minus one.
 
-00:00:56.746 --> 00:01:01.984
+00:00:56.680 --> 00:01:01.918
 Take the best result across both endpoint pairing and mid-interval splitting.
 
-00:01:02.300 --> 00:01:10.813
+00:01:02.208 --> 00:01:10.721
 When items sit on a circular ring rather than a straight line, concatenate the array with itself to form a sequence of length 2N.
 
-00:01:10.813 --> 00:01:15.894
+00:01:10.721 --> 00:01:15.802
 Run standard interval DP on segments up to length N across the doubled array.
 
-00:01:15.894 --> 00:01:20.711
+00:01:15.802 --> 00:01:20.619
 The optimal answer over all length-N windows solves the circular problem.

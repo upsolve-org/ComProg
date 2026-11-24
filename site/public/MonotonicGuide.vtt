@@ -9,29 +9,29 @@ Before pushing a new element, pop every top element that is worse and older.
 00:00:14.188 --> 00:00:20.440
 Each element is pushed once and popped at most once, guaranteeing linear time.
 
-00:00:20.767 --> 00:00:27.263
+00:00:20.708 --> 00:00:27.205
 When searching for the next greater element to the right, keep a decreasing stack of unresolved indices.
 
-00:00:27.263 --> 00:00:33.384
+00:00:27.205 --> 00:00:33.326
 As soon as a larger value arrives, it resolves and pops all smaller items at the top of the stack.
 
-00:00:33.384 --> 00:00:38.007
+00:00:33.326 --> 00:00:37.948
 The item remaining below becomes the nearest greater neighbor on the left.
 
-00:00:38.333 --> 00:00:45.738
+00:00:38.208 --> 00:00:45.613
 A monotonic deque extends the stack by also evicting expired indices from the front as a window slides.
 
-00:00:45.738 --> 00:00:52.854
+00:00:45.613 --> 00:00:52.729
 Maintain indices in decreasing order of value so the front always holds the current window maximum.
 
-00:00:52.854 --> 00:00:58.533
+00:00:52.729 --> 00:00:58.408
 Sliding window minimum and maximum queries then run in amortized O(1) per step.
 
-00:00:58.867 --> 00:01:07.508
+00:00:58.667 --> 00:01:07.308
 In histogram and grid problems, each bar wants to know how far left and right it can extend without meeting a shorter bar.
 
-00:01:07.508 --> 00:01:12.538
+00:01:07.308 --> 00:01:12.338
 A monotonic stack finds both boundaries for every bar in a single pass.
 
-00:01:12.538 --> 00:01:17.638
+00:01:12.338 --> 00:01:17.438
 Multiply each bar's height by its maximal span to find the largest area.

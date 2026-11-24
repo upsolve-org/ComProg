@@ -25,6 +25,23 @@ Dynamic Programming solves complex optimization problems by decomposing them int
 3. **Base Cases & Initialization:** What are the trivial endpoints? (e.g. `dp[0][0] = 0`, unreachable states = $-\infty$ or $\infty$).
 4. **Order of Computation & Space Optimization:** Can we compute iteratively (tabulation) row by row, and compress the state table from 2D to 1D?
 
+### Worked Example: 0/1 Knapsack in 1D
+Weights `[2, 3, 4, 5]`, values `[3, 4, 5, 7]`, capacity `5`. Values come first, then weights; the capacity is the heaviest weight, so every item is affordable on its own:
+
+```python
+def knapsack(values, weights, capacity):
+    best = [0] * (capacity + 1)              # best[w] = max value with total weight exactly w
+    for v, w in zip(values, weights):
+        for room in range(capacity, w - 1, -1):   # backwards, so w is used once
+            best[room] = max(best[room], best[room - w] + v)
+    return max(best)
+
+
+print(knapsack([3, 4, 5, 7], [2, 3, 4, 5], 5))   # 7: item 4 alone beats 3 + 4
+```
+
+Walking `room` backwards is the whole trick. Forward, `best[room - w]` may already hold the current item, and the same table answers the unbounded variant. The values trace `[3, 4, 5, 7]`: taking both `3` and `4` (weights 2 + 3) gives 7 for weight 5, and `7` for weight 5 ties it.
+
 ---
 
 ## 🐍 Python-Specific DP Best Practices

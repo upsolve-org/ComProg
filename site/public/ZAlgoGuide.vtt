@@ -9,29 +9,29 @@ While KMP looks backward at suffixes ending at i, the Z-algorithm looks forward 
 00:00:16.693 --> 00:00:22.480
 This direct forward view makes prefix-matching constraints effortless to read.
 
-00:00:22.800 --> 00:00:30.128
+00:00:22.750 --> 00:00:30.078
 Maintain the interval L to R of the match reaching furthest to the right seen so far.
 
-00:00:30.128 --> 00:00:44.957
+00:00:30.078 --> 00:00:44.907
 When index i falls inside this Z-box, the characters from i to R duplicate the prefix at offset i minus L, so initialize z[i] from z[i minus L] clipped to the box boundary.
 
-00:00:44.957 --> 00:00:49.440
+00:00:44.907 --> 00:00:49.390
 Only characters beyond R are ever compared directly.
 
-00:00:49.767 --> 00:00:57.508
+00:00:49.667 --> 00:00:57.408
 Whenever a character comparison succeeds past the current right boundary R, advance R and update L to i.
 
-00:00:57.508 --> 00:01:07.258
+00:00:57.408 --> 00:01:07.158
 Because R starts at zero and never decreases, the inner while-loop executes at most N successful comparisons across the entire run.
 
-00:01:07.258 --> 00:01:10.087
+00:01:07.158 --> 00:01:09.987
 Total runtime is strictly linear O(N).
 
-00:01:10.400 --> 00:01:17.636
+00:01:10.250 --> 00:01:17.486
 Just like KMP, running Z on P plus sentinel plus T flags every occurrence where z equals the length of P.
 
-00:01:17.636 --> 00:01:25.631
+00:01:17.486 --> 00:01:25.481
 Running Z on S concatenated with itself compares every cyclic shift against the original string in one linear sweep.
 
-00:01:25.631 --> 00:01:31.971
+00:01:25.481 --> 00:01:31.821
 And any index i where i plus z[i] equals N is a valid border that is both prefix and suffix.

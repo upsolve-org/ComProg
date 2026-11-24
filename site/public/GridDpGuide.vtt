@@ -9,29 +9,29 @@ Row-by-row and column-by-column iteration visits every parent state before its d
 00:00:13.831 --> 00:00:19.000
 Each cell combines the optimal answers from its top and left neighbors.
 
-00:00:19.300 --> 00:00:25.914
+00:00:19.292 --> 00:00:25.905
 Blocked cells cannot be entered, so set their path count to zero or their cost to infinity immediately.
 
-00:00:25.914 --> 00:00:32.014
+00:00:25.905 --> 00:00:32.005
 Initialize the starting corner first and propagate along the top row and left column carefully.
 
-00:00:32.014 --> 00:00:36.380
+00:00:32.005 --> 00:00:36.372
 Apply modular arithmetic at each addition when counting total paths.
 
-00:00:36.700 --> 00:00:45.543
+00:00:36.625 --> 00:00:45.468
 Because row r only reads from row r minus one and the current row, you never need to keep the entire grid in memory.
 
-00:00:45.543 --> 00:00:51.718
+00:00:45.468 --> 00:00:51.643
 Maintain a single one-dimensional array of length C and update it across columns.
 
-00:00:51.718 --> 00:00:57.740
+00:00:51.643 --> 00:00:57.665
 Rolling arrays cut memory from O(R times C) to O(C) and improve cache locality.
 
-00:00:58.067 --> 00:01:06.399
+00:00:57.917 --> 00:01:06.249
 When a problem asks for the actual sequence of moves, compare the top and left transitions or store a compact direction flag.
 
-00:01:06.399 --> 00:01:13.131
+00:01:06.249 --> 00:01:12.982
 Backtrack from the destination corner to the start by following the winning predecessor at each step.
 
-00:01:13.131 --> 00:01:17.398
+00:01:12.982 --> 00:01:17.248
 Reverse the collected steps to output the path in forward order.

@@ -9,26 +9,26 @@ Bellman-Ford relaxes every edge in the graph across V minus one rounds, extendin
 00:00:15.256 --> 00:00:19.840
 Early exit as soon as a full round produces no distance updates.
 
-00:00:20.167 --> 00:00:27.648
+00:00:20.125 --> 00:00:27.606
 If any edge can still be relaxed on the V-th round, the graph contains a reachable negative-weight cycle.
 
-00:00:27.648 --> 00:00:35.984
+00:00:27.606 --> 00:00:35.943
 To find which destinations have arbitrarily small paths, seed all nodes improved on round V into a queue and run BFS.
 
-00:00:35.984 --> 00:00:40.687
+00:00:35.943 --> 00:00:40.645
 Every node reached by that BFS can achieve negative infinity cost.
 
-00:00:41.000 --> 00:00:50.655
+00:00:40.917 --> 00:00:50.572
 For dense graphs up to four hundred vertices, Floyd-Warshall computes shortest paths between all pairs in three nested loops.
 
-00:00:50.655 --> 00:00:59.924
+00:00:50.572 --> 00:00:59.841
 The intermediate pivot vertex k must always be the outermost loop so paths build up through vertices zero to k in order.
 
-00:00:59.924 --> 00:01:05.640
+00:00:59.841 --> 00:01:05.557
 Cache the row d[i] and value d[i][k] outside the innermost loop for speed.
 
-00:01:05.967 --> 00:01:15.198
+00:01:05.833 --> 00:01:15.064
 After Floyd-Warshall finishes, any negative value on the main diagonal d[i][i] reveals a negative cycle passing through vertex i.
 
-00:01:15.198 --> 00:01:26.218
+00:01:15.064 --> 00:01:26.084
 The same cubic triple loop also solves transitive reachability and widest bottleneck paths by swapping addition and minimum for the appropriate operators.

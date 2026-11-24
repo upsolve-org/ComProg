@@ -42,6 +42,23 @@ In competitive programming, the golden rule of thumb for time limits is usually 
 Allows calculating the sum of elements in any range $[L, R]$ in $O(1)$ time after $O(N)$ precomputation.
 $$\text{sum}(L, R) = \text{pref}[R + 1] - \text{pref}[L]$$
 
+Worked example on `3 1 4 1 5`, the first array of the overview visualizer. The pref table is `0 3 4 8 9 14`, so `sum(1, 3) = pref[4] - pref[1] = 9 - 3 = 6`:
+
+```python
+def build(a):
+    pref = [0] * (len(a) + 1)
+    for i, x in enumerate(a):
+        pref[i + 1] = pref[i] + x
+    return pref
+
+
+pref = build([3, 1, 4, 1, 5])
+print([pref[r + 1] - pref[l] for l in range(5) for r in range(l, 5)])
+# [3, 4, 8, 9, 14, 1, 5, 6, 11, 4, 5, 10, 1, 6, 5] : all 15 range sums, two lookups each
+```
+
+Both queries are built once, so `Q` ranges cost $O(N + Q)$ instead of $O(NQ)$.
+
 ### 2. 2D Prefix Sums
 Computes rectangular subgrid sums in $O(1)$ using the principle of inclusion-exclusion:
 $$\text{Sum}(r_1, c_1, r_2, c_2) = P[r_2+1][c_2+1] - P[r_1][c_2+1] - P[r_2+1][c_1] + P[r_1][c_1]$$
@@ -50,6 +67,26 @@ $$\text{Sum}(r_1, c_1, r_2, c_2) = P[r_2+1][c_2+1] - P[r_1][c_2+1] - P[r_2+1][c_
 Allows applying range addition updates $+V$ to an interval $[L, R]$ in $O(1)$ time, followed by a single $O(N)$ prefix scan at the end.
 - `diff[L] += V`
 - `diff[R + 1] -= V`
+
+Three updates on a zero array of length 5, then one sweep. Each update is two writes; the sweep turns the markers into the real values:
+
+```python
+n = 5
+diff = [0] * (n + 1)
+
+for l, r, v in [(1, 3, 2), (0, 1, 5), (2, 4, 1)]:
+    diff[l] += v
+    diff[r + 1] -= v
+print(diff)                       # [5, 2, -4, 0, -2, -1] : markers only
+
+values, running = [], 0
+for i in range(n):
+    running += diff[i]
+    values.append(running)
+print(values)                     # [5, 7, 3, 3, 1]
+```
+
+Without the difference array the same three updates touch `2 + 2 + 3 = 7` positions; here they cost six writes.
 
 ---
 

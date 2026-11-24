@@ -9,29 +9,29 @@ Shift right by k and mask with one to read bit k, or shift one left by k to set,
 00:00:14.658 --> 00:00:23.080
 Use x.bit_count() and x.bit_length() in modern Python for fast population count and highest-bit lookups.
 
-00:00:23.400 --> 00:00:29.838
+00:00:23.333 --> 00:00:29.771
 Subtracting one flips the lowest set bit to zero and turns all trailing zeros into ones.
 
-00:00:29.838 --> 00:00:40.519
+00:00:29.771 --> 00:00:40.452
 Therefore x bitwise-and x minus one clears the lowest set bit in a single step, and equals zero for positive x if and only if x is a power of two.
 
-00:00:40.519 --> 00:00:45.640
+00:00:40.452 --> 00:00:45.573
 Meanwhile x bitwise-and negative x isolates that exact lowest set bit.
 
-00:00:45.967 --> 00:00:54.108
+00:00:45.833 --> 00:00:53.975
 Exclusive-OR is associative, commutative, and its own inverse because every value cancels itself out.
 
-00:00:54.108 --> 00:01:02.168
+00:00:53.975 --> 00:01:02.035
 Prefix XOR arrays answer range XOR queries in O(1) time using the exact same formula as prefix sums.
 
-00:01:02.168 --> 00:01:07.247
+00:01:02.035 --> 00:01:07.113
 Note that addition equals XOR plus twice the bitwise-AND carry.
 
-00:01:07.567 --> 00:01:16.429
+00:01:07.375 --> 00:01:16.237
 A linear XOR basis compresses a huge array of integers into at most sixty basis vectors indexed by their highest set bit.
 
-00:01:16.429 --> 00:01:24.852
+00:01:16.237 --> 00:01:24.660
 To insert x, XOR it with existing basis vectors from top bit down until x becomes zero or claims an empty bit slot.
 
-00:01:24.852 --> 00:01:30.858
+00:01:24.660 --> 00:01:30.666
 Greedily XORing with the basis from highest bit down finds the maximum subset XOR.

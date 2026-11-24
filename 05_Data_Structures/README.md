@@ -26,6 +26,35 @@ Data structures allow us to store, query, and mutate collections of data efficie
 - With **Path Compression** and **Union by Size/Rank**, operations are virtually $O(1)$ (specifically $O(\alpha(N))$, where $\alpha$ is the Inverse Ackermann function $\le 4$).
 - Applications: Kruskal's MST, connected components, cycle detection in undirected graphs.
 
+```python
+class DSU:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.size = [1] * n
+
+    def find(self, x):
+        while self.parent[x] != x:            # halving: shorten the path as we walk
+            self.parent[x] = self.parent[self.parent[x]]
+            x = self.parent[x]
+        return x
+
+    def union(self, a, b):
+        ra, rb = self.find(a), self.find(b)
+        if ra == rb:
+            return False                      # already connected: an edge here closes a cycle
+        if self.size[ra] < self.size[rb]:     # smaller set hangs under the larger root
+            ra, rb = rb, ra
+        self.parent[rb] = ra
+        self.size[ra] += self.size[rb]
+        return True
+
+
+dsu = DSU(6)
+print([dsu.union(a, b) for a, b in [(0, 1), (2, 3), (1, 2), (0, 3)]])  # [True, True, True, False]
+```
+
+`union(0, 3)` after `0→1`, `2→3`, `1→2` returns `False`: all four already share root `0`, so the edge is redundant.
+
 ### 2. Fenwick Tree (Binary Indexed Tree - BIT)
 - $O(\log N)$ Point Updates and $O(\log N)$ Prefix Sum queries.
 - Extremely lightweight, low memory overhead, and 2× to 3× faster constant factors in Python than segment trees.

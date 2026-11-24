@@ -3,7 +3,12 @@ import { readdir, readFile, mkdir, cp, writeFile } from 'node:fs/promises'
 import { build } from 'esbuild'
 import { marked } from 'marked'
 import { labs } from './labs.mjs'
+import { cppLabs } from './labs-cpp.mjs'
 import { quizzes } from './quizzes.mjs'
+import { cppQuizzes } from './quizzes-cpp.mjs'
+import { chapterAssessments } from './assessments.mjs'
+import { recommendedByChapter } from './recommended.mjs'
+import { unpackProblems } from './codeforces.mjs'
 import { buildFilmChapters, filmNotes } from './video.mjs'
 
 const root = new URL('../', import.meta.url)
@@ -57,9 +62,20 @@ function chapterSections(overview) {
 const folders = (await readdir(root, { withFileTypes: true }))
   .filter(entry => entry.isDirectory() && /^\d{2}_/.test(entry.name))
   .map(entry => entry.name).sort()
+const cppFolders = (await readdir(new URL('cpp/', root), { withFileTypes: true }))
+  .filter(entry => entry.isDirectory() && /^\d{2}_/.test(entry.name))
+  .map(entry => entry.name).sort()
 if (folders.length !== titles.length || labs.length !== titles.length - 1 || quizzes.length !== titles.length) {
   throw new Error('Course folders and lesson definitions are out of sync.')
 }
+if (cppFolders.join() !== folders.join() || cppLabs.length !== titles.length - 1 ||
+    cppQuizzes.length !== titles.length) {
+  throw new Error('C++ folders and lesson definitions are out of sync.')
+}
+const pythonOrder = noteOrder.map(group => group.split(' '))
+// The C++ course of the same module taught from a different language.
+const cppOrder = pythonOrder.map(group => group.map(note => note
+  .replace('python_cp_guide', 'cpp_cp_guide').replace('ordered_set_python', 'ordered_set_pbds')))
 
 const scripts = JSON.parse((await readFile(new URL('site/video/lessons.json', root), 'utf8')).replace(/^\uFEFF/, ''))
 const filmIds = new Set([...Object.keys(scripts), ...Object.values(filmNotes)])
@@ -69,17 +85,51 @@ const films = Object.fromEntries(await Promise.all(Array.from(filmIds).map(async
   return [film, buildFilmChapters(scripts[film], vtt, film)]
 })))
 
-const course = await Promise.all(folders.map(async (folder, index) => {
-  const dir = new URL(folder + '/', root)
-  const notes = (await readdir(dir)).filter(name =>
-    name.endsWith('.md') && name !== 'README.md' && name !== folder + '.md').sort()
-  const order = noteOrder[index].split(' ')
-  const orderedNotes = await Promise.all(notes.map(async name => {
+const pythonOnly = new Set(['python_cp_guide.md', 'ordered_set_python.md'])
+const cppOnly = new Set(['cpp_cp_guide.md', 'ordered_set_pbds.md', 'session_card_01.md',
+  'session_card_02.md', 'session_card_03.md', 'session_card_04.md', 'session_card_05.md',
+  'session_card_06.md', 'session_card_07.md', 'session_card_08.md', 'session_card_09.md',
+  'session_card_10.md'])
+
+const cfPacked = JSON.parse(await readFile(new URL('site/public/codeforces-problems.json', root), 'utf8'))
+const cfById = new Map(unpackProblems(cfPacked).problems.map(p => [p.id, p]))
+
+function buildRecommended(folder) {
+  const entry = recommendedByChapter[folder]
+  if (!entry) return null
+  return {
+    cfTag: entry.cfTag,
+    subtitle: entry.subtitle,
+    problems: entry.problems.map(item => {
+      const live = cfById.get(item.id)
+      return {
+        id: item.id,
+        name: live?.name ?? item.id,
+        rating: live?.rating ?? null,
+        tags: live?.tags ?? [entry.cfTag],
+        solvedCount: live?.solvedCount ?? 0,
+        url: live?.url ?? `https://codeforces.com/problemset/problem/${item.id}`,
+        topic: item.topic,
+        tier: item.tier,
+        why: item.why
+      }
+    })
+  }
+}
+
+async function buildCourse({ base, moduleFolder, order, lessonList, quizList, skip, language }) {
+  return Promise.all(moduleFolder.map(async (folder, index) => {
+    const dir = new URL(base + folder + '/', root)
+    const notes = (await readdir(dir)).filter(name =>
+      name.endsWith('.md') && name !== 'README.md' && name !== folder + '.md' &&
+      !skip.has(name)).sort()
+    const noteOrder = order[index].filter(name => name && !skip.has(name + '.md'))
+    const orderedNotes = await Promise.all(notes.map(async name => {
       const raw = await readFile(new URL(name, dir), 'utf8')
       const film = filmNotes[name]
       return {
         name,
-        taught: order.includes(name.slice(0, -3)),
+        taught: noteOrder.includes(name.slice(0, -3)),
         title: raw.match(/^# (.+)$/m)?.[1].trim() ?? name,
         ...(film && { film, chapters: films[film] }),
         markdown: clean(raw).replace(/^> \*\*Implementation Note\*\*\n(?:>[^\n]*\n)+/gm, '')
@@ -87,23 +137,47 @@ const course = await Promise.all(folders.map(async (folder, index) => {
           .replace(/^## [^\n]*Complexity & Analysis\r?\n- \*\*Time Complexity:\*\* See docstrings[^\n]*\n- \*\*Space Complexity:\*\* See docstrings[^\n]*\n/gm, '')
       }
     }))
-  return {
-    id: folder,
-    title: titles[index],
-    sections: chapterSections(clean(await readFile(new URL('README.md', dir), 'utf8'))),
-    notes: [...order.map(stem => orderedNotes.find(note => note.name === stem + '.md')).filter(Boolean),
-      ...orderedNotes.filter(note => !note.taught)],
-    quizzes: quizzes[index],
-    lab: labs[index] && {
-      title: labs[index].title,
-      task: labs[index].task
+    const assessments = (chapterAssessments[folder] ?? []).map(a => ({
+      id: a.id,
+      afterNote: language === 'cpp' && a.afterNoteCpp ? a.afterNoteCpp : a.afterNote,
+      title: a.title,
+      difficulty: a.difficulty,
+      ...(a.labIndex !== undefined ? { labIndex: a.labIndex } : {}),
+      task: a.task,
+      cases: a.cases,
+      hints: a.hints,
+      starter: language === 'cpp' ? a.cppStarter : a.pythonStarter
+    }))
+    return {
+      id: folder,
+      title: titles[index],
+      sections: chapterSections(clean(await readFile(new URL('README.md', dir), 'utf8'))),
+      notes: [...noteOrder.map(stem => orderedNotes.find(note => note.name === stem + '.md')).filter(Boolean),
+        ...orderedNotes.filter(note => !note.taught)],
+      quizzes: quizList[index],
+      assessments,
+      recommended: buildRecommended(folder),
+      lab: lessonList[index] && {
+        title: lessonList[index].title,
+        task: lessonList[index].task
+      }
     }
-  }
-}))
+  }))
+}
+
+const course = await buildCourse({
+  base: '', moduleFolder: folders, order: pythonOrder, lessonList: labs, quizList: quizzes,
+  skip: cppOnly, language: 'python'
+})
+const cppCourse = await buildCourse({
+  base: 'cpp/', moduleFolder: cppFolders, order: cppOrder, lessonList: cppLabs, quizList: cppQuizzes,
+  skip: pythonOnly, language: 'cpp'
+})
 
 await mkdir(dist, { recursive: true })
 await cp(new URL('site/public/', root), dist, { recursive: true })
 await writeFile(new URL('course.json', dist), JSON.stringify(course))
+await writeFile(new URL('course-cpp.json', dist), JSON.stringify(cppCourse))
 await build({
   absWorkingDir: fileURLToPath(root),
   entryPoints: ['site/app.js'], bundle: true, format: 'esm', minify: true, outdir: 'dist',

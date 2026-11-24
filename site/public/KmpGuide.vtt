@@ -9,29 +9,29 @@ These matching prefix-suffix overlaps are called borders of the substring.
 00:00:14.220 --> 00:00:21.440
 Knowing every border lets a pattern matcher slide forward without ever backing up the text pointer.
 
-00:00:21.767 --> 00:00:31.727
+00:00:21.708 --> 00:00:31.668
 To compute pi[i], try extending the previous border of length j equals pi[i minus one] by comparing S[i] with S[j].
 
-00:00:31.727 --> 00:00:40.907
+00:00:31.668 --> 00:00:40.849
 On a mismatch, fall back to the next widest border pi[j minus one] until a match occurs or j reaches zero.
 
-00:00:40.907 --> 00:00:51.647
+00:00:40.849 --> 00:00:51.588
 Because j increases by at most one per step and only drops on fallbacks, the entire table builds in deterministic O(N) time.
 
-00:00:51.967 --> 00:01:01.188
+00:00:51.875 --> 00:01:01.096
 Concatenate the pattern P, a sentinel character absent from both strings, and the text T, then compute the prefix function.
 
-00:01:01.188 --> 00:01:08.684
+00:01:01.096 --> 00:01:08.593
 Every position where pi equals the length of P marks the exact end of a full occurrence in the text.
 
-00:01:08.684 --> 00:01:15.207
+00:01:08.593 --> 00:01:15.115
 Unlike rolling hashes, KMP has zero collision risk and needs no big-integer arithmetic.
 
-00:01:15.533 --> 00:01:22.827
+00:01:15.375 --> 00:01:22.669
 The value N minus pi[N minus one] reveals the shortest possible period length k of a string of length N.
 
-00:01:22.827 --> 00:01:28.928
+00:01:22.669 --> 00:01:28.770
 If k divides N evenly, the entire string is formed by repeating its first k characters.
 
-00:01:28.928 --> 00:01:37.344
+00:01:28.770 --> 00:01:37.186
 Counting occurrences of each prefix also follows by accumulating counts from i down to pi[i minus one] in reverse order.

@@ -27,6 +27,29 @@ Competitive programming problems heavily feature number theory, modular arithmet
 - **Smallest Prime Factor (SPF):** Computes prime factorization of any queried number $\le N$ in $O(\log N)$ after an $O(N)$ sieve preprocessing.
 - **Euclidean Algorithm for GCD:** `math.gcd(a, b)` operates in $O(\log(\min(a, b)))$.
 
+### Worked Example: The Sieve Makes Crossing Cheap
+To list the primes up to 30, cross multiples of each prime starting at $p^2$: anything below $p^2$ already has a smaller factor and is crossed. Stop once $p^2$ exceeds the limit:
+
+```python
+n = 30
+composite = [False] * (n + 1)
+crossings = 0
+
+p = 2
+while p * p <= n:
+    if not composite[p]:
+        for multiple in range(p * p, n + 1, p):   # 4, 6, 8, ... then 9, 12, ... then 25, 30
+            if not composite[multiple]:
+                composite[multiple] = True
+                crossings += 1
+    p += 1
+
+print(crossings, [x for x in range(2, n + 1) if not composite[x]])
+# 19 [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+```
+
+`6` is crossed once, by `2`, before `3` ever looks at it; starting each prime at `2` instead would cross it twice. The inner range shrinks with $p$, so all crossings together stay $O(N \log \log N)$.
+
 ---
 
 ## 🧮 2. Modular Arithmetic & Combinatorics

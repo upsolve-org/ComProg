@@ -9,29 +9,29 @@ Record tin[u] when vertex u is first entered, and maintain low[u] as the earlies
 00:00:19.255 --> 00:00:25.320
 Ignore the direct edge back to the immediate parent unless parallel edges exist.
 
-00:00:25.633 --> 00:00:32.880
+00:00:25.583 --> 00:00:32.830
 A tree edge from u to child v is a bridge if and only if low[v] is strictly greater than tin[u].
 
-00:00:32.880 --> 00:00:40.126
+00:00:32.830 --> 00:00:40.076
 Strict inequality means no vertex in v's subtree has a back-edge reaching u or an ancestor of u.
 
-00:00:40.126 --> 00:00:44.353
+00:00:40.076 --> 00:00:44.303
 Deleting a bridge splits the connected component in two.
 
-00:00:44.667 --> 00:00:55.792
+00:00:44.583 --> 00:00:55.708
 A non-root vertex u is an articulation point if it has at least one child subtree v with low[v] greater than or equal to tin[u].
 
-00:00:55.792 --> 00:01:02.658
+00:00:55.708 --> 00:01:02.575
 Because v can only reach u and not above u, removing u disconnects v's subtree.
 
-00:01:02.658 --> 00:01:10.307
+00:01:02.575 --> 00:01:10.223
 The DFS root is an articulation point exactly when it has two or more DFS tree children.
 
-00:01:10.633 --> 00:01:18.120
+00:01:10.500 --> 00:01:17.987
 Contracting every bridge-connected component into a single super-node turns any connected graph into a tree of bridges.
 
-00:01:18.120 --> 00:01:24.537
+00:01:17.987 --> 00:01:24.404
 Paths in this condensed tree reveal which edges must be traversed by every route between two vertices.
 
-00:01:24.537 --> 00:01:29.444
+00:01:24.404 --> 00:01:29.311
 You can then apply standard tree DP or LCA queries on the condensed structure.
